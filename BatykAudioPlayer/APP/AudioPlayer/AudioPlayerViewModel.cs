@@ -9,8 +9,13 @@ namespace BatykAudioPlayer.APP.AudioPlayer
 {
     class AudioPlayerViewModel : ViewModelBase
     {
-        public SoundEngine soundEngine;
+        private ISoundEngine soundEngine;
         public SoundState currentSoundState;
         public string currentSoundPath;
+
+        public AudioPlayerViewModel()
+        {
+            soundEngine = new SoundEngine();
+        }
     }
 }

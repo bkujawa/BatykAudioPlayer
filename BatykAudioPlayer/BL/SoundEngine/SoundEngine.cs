@@ -10,7 +10,7 @@ namespace BatykAudioPlayer.BL.SoundEngine
     public class SoundEngine : ISoundEngine
     {
         private readonly MediaPlayer mediaPlayer;
-        private SoundState CurrentState;
+        private SoundState currentState;
 
         public void Pause()
         {

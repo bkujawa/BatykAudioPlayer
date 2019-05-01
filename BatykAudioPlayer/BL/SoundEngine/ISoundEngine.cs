@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace BatykAudioPlayer.BL.SoundEngine
 {
+    /// <summary>
+    /// Interface implemented in <see cref="SoundEngine"/>.
+    /// </summary>
     interface ISoundEngine
     {
         void Play(string path);
