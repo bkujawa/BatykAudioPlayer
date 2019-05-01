@@ -10,20 +10,19 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace BatykAudioPlayer
+namespace BatykAudioPlayer.APP.AudioPlayer
 {
-
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for AudioPlayerView.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class AudioPlayerView : Window
     {
-        public MainWindow()
+        public AudioPlayerView()
         {
             InitializeComponent();
+            DataContext = new AudioPlayerViewModel();
         }
     }
 }

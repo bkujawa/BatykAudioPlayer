@@ -55,18 +55,19 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="MainWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
-      <SubType>Code</SubType>
+    <Compile Include="APP\AudioPlayer\AudioPlayerView.xaml.cs">
+      <DependentUpon>AudioPlayerView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="APP\AudioPlayer\AudioPlayerViewModel.cs" />
+    <Compile Include="APP\ViewModelBase.cs" />
+    <Compile Include="BL\SoundEngine\ISoundEngine.cs" />
+    <Compile Include="BL\SoundEngine\Sound.cs" />
+    <Compile Include="BL\SoundEngine\SoundEngine.cs" />
+    <Compile Include="BL\SoundEngine\SoundState.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -93,6 +94,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="APP\AudioPlayer\AudioPlayerView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

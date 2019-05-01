@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.28307.329
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BatykAudioPlayer", "BatykAudioPlayer\BatykAudioPlayer.csproj", "{D5894E99-9CD3-46ED-8BD7-5AA3386A4775}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BatykAudioPlayer.Tests", "BatykAudioPlayer.Tests\BatykAudioPlayer.Tests.csproj", "{EBA8D12D-A189-428C-B523-66919A3BB9C4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{D5894E99-9CD3-46ED-8BD7-5AA3386A4775}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D5894E99-9CD3-46ED-8BD7-5AA3386A4775}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D5894E99-9CD3-46ED-8BD7-5AA3386A4775}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EBA8D12D-A189-428C-B523-66919A3BB9C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EBA8D12D-A189-428C-B523-66919A3BB9C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EBA8D12D-A189-428C-B523-66919A3BB9C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EBA8D12D-A189-428C-B523-66919A3BB9C4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
