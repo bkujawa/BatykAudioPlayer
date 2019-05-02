@@ -16,17 +16,12 @@ namespace BatykAudioPlayer.APP.AudioPlayer
 {
     class AudioPlayerViewModel : ViewModelBase
     {
+        #region Private fields
+
         private ISoundEngine soundEngine;
         private SoundState? currentSoundState;
         private readonly DispatcherTimer timer;
-
         private Sound selectedSound;
-
-        #region ICommand commands
-
-        public ICommand Play { get; private set; }
-        public ICommand Pause { get; private set; }
-        public ICommand Open { get; private set; }
 
         #endregion
 
@@ -46,15 +41,21 @@ namespace BatykAudioPlayer.APP.AudioPlayer
 
         #endregion
 
+        #region ICommand
+
+        public ICommand Play { get; private set; }
+        public ICommand Pause { get; private set; }
+        public ICommand Open { get; private set; }
+
+        #endregion
+
         public AudioPlayerViewModel()
         {
             this.soundEngine = new SoundEngine();
             this.soundEngine.StateChanged += OnStateChanged;
             this.soundEngine.SoundError += OnSoundError;
 
-            Play = new RelayCommand(ExecutePlay, CanExecutePlay);
-            Pause = new RelayCommand(ExecutePause, CanExecutePause);
-            Open = new RelayCommand(ExecuteOpen, CanExecuteOpen);
+            RegisterCommands();
 
             Sounds = new ObservableCollection<Sound>();
 
@@ -75,6 +76,45 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         {
             
         }
+
+        private void RegisterCommands()
+        {
+            Play = new RelayCommand(ExecutePlay, CanExecutePlay);
+            Pause = new RelayCommand(ExecutePause, CanExecutePause);
+            Open = new RelayCommand(ExecuteOpen, CanExecuteOpen);
+        }
+
+        private void FillSoundsDirectory(string path)
+        {
+            if (!string.IsNullOrEmpty(path))
+            {
+                var allFiles = Directory.GetFiles(path);
+                var soundList = new List<Sound>();
+                foreach(var file in allFiles)
+                {
+                    var pathExtension = Path.GetExtension(file);
+                    if (pathExtension?.ToUpper() == ".MP3")
+                    {
+                        soundList.Add(new Sound(Path.GetFileNameWithoutExtension(file), file));
+                    }
+                }
+                Sounds.Clear();
+                soundList.ForEach(s => Sounds.Add(s));
+            }
+        }
+
+        private void OnSoundError(object sender, SoundEngineErrorArgs e)
+        {
+            MessageBox.Show(e.ErrorDetails, "Sound error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
+        private void OnStateChanged(object sender, SoundEngineEventArgs e)
+        {
+            this.currentSoundState = e.NewState;
+            UpdateTime();
+        }
+
+        #region ICommand implementation
 
         private bool CanExecutePause(object obj)
         {
@@ -109,34 +149,6 @@ namespace BatykAudioPlayer.APP.AudioPlayer
             FillSoundsDirectory(dirPath);
         }
 
-        private void FillSoundsDirectory(string path)
-        {
-            if (!string.IsNullOrEmpty(path))
-            {
-                var allFiles = Directory.GetFiles(path);
-                var soundList = new List<Sound>();
-                foreach(var file in allFiles)
-                {
-                    var pathExtension = Path.GetExtension(file);
-                    if (pathExtension?.ToUpper() == ".MP3")
-                    {
-                        soundList.Add(new Sound(Path.GetFileNameWithoutExtension(file), file));
-                    }
-                }
-                Sounds.Clear();
-                soundList.ForEach(s => Sounds.Add(s));
-            }
-        }
-
-        private void OnSoundError(object sender, SoundEngineErrorArgs e)
-        {
-            MessageBox.Show(e.ErrorDetails, "Sound error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        }
-
-        private void OnStateChanged(object sender, SoundEngineEventArgs e)
-        {
-            this.currentSoundState = e.NewState;
-            UpdateTime();
-        }
+        #endregion
     }
 }
