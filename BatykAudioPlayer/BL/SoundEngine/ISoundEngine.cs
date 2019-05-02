@@ -19,5 +19,7 @@ namespace BatykAudioPlayer.BL.SoundEngine
         void VolumeMute();
         event EventHandler<SoundEngineEventArgs> StateChanged;
         event EventHandler<SoundEngineErrorArgs> SoundError;
+        Tuple<TimeSpan, TimeSpan> GetTimePosition();
+        double GetFilePosition();
     }
 }
