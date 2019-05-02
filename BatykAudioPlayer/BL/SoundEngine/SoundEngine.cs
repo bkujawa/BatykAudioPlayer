@@ -11,20 +11,55 @@ namespace BatykAudioPlayer.BL.SoundEngine
     {
         private readonly MediaPlayer mediaPlayer;
         private SoundState currentState;
+        private string currentPath;
+
+        EventHandler<SoundEngineEventArgs> StateChanged;
+        EventHandler<SoundEngineErrorArgs> SoundError;
 
         public SoundEngine()
         {
             this.mediaPlayer = new MediaPlayer();
         }
 
-        public void Pause()
-        {
-            throw new NotImplementedException();
-        }
-
         public void Play(string path)
         {
-            throw new NotImplementedException();
+            try
+            {
+                if (this.currentState != SoundState.Unknown)
+                {
+                    if (this.currentPath == path)
+                    {
+                        this.mediaPlayer.Play();
+                    }
+                    else
+                    {
+                        this.mediaPlayer.Open(new Uri(path));
+                        this.currentPath = path;
+                        this.mediaPlayer.Play();
+                    }
+                    OnStateChanged(SoundState.Playing);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                OnStateChanged(SoundState.Unknown);
+                OnError(ex.Message);
+            }
+        }
+
+        public void Pause()
+        {
+            try
+            {
+                this.mediaPlayer.Pause();
+                OnStateChanged(SoundState.Paused);
+            }
+            catch(Exception ex)
+            {
+                OnStateChanged(SoundState.Unknown);
+                OnError(ex.Message);
+            }
         }
 
         public void Stop()
@@ -45,6 +80,35 @@ namespace BatykAudioPlayer.BL.SoundEngine
         public void VolumeUp()
         {
             throw new NotImplementedException();
+        }
+
+        private void OnStateChanged(SoundState newState)
+        {
+            this.currentState = newState;
+            StateChanged?.Invoke(this, new SoundEngineEventArgs(newState));
+        }
+
+        private void OnError(string error)
+        {
+            SoundError?.Invoke(this, new SoundEngineErrorArgs(error));
+        }
+    }
+
+    public class SoundEngineEventArgs : EventArgs
+    {
+        public SoundState NewState { get; private set; }
+        public SoundEngineEventArgs(SoundState NewState)
+        {
+            this.NewState = NewState;
+        }
+    }
+
+    public class SoundEngineErrorArgs
+    {
+        public string ErrorDetails { get; private set; }
+        public SoundEngineErrorArgs(string ErrorDetails)
+        {
+            this.ErrorDetails = ErrorDetails;
         }
     }
 }

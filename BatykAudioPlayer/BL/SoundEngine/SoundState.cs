@@ -9,7 +9,7 @@ namespace BatykAudioPlayer.BL.SoundEngine
     /// <summary>
     /// Enum representation of <see cref="SoundEngine"/> (<see cref="System.Windows.Media.MediaPlayer"/>) state.
     /// </summary>
-    enum SoundState
+    public enum SoundState
     {
         Unknown,
         Playing,
