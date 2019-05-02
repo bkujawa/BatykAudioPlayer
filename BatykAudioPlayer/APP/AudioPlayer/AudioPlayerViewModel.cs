@@ -17,8 +17,10 @@ namespace BatykAudioPlayer.APP.AudioPlayer
     class AudioPlayerViewModel : ViewModelBase
     {
         private ISoundEngine soundEngine;
-        private SoundState currentSoundState;
+        private SoundState? currentSoundState;
         private readonly DispatcherTimer timer;
+
+        private Sound selectedSound;
 
         #region ICommand commands
 
@@ -32,10 +34,10 @@ namespace BatykAudioPlayer.APP.AudioPlayer
 
         public Sound SelectedSound
         {
-            get => SelectedSound;
+            get => this.selectedSound;
             set
             {
-                SelectedSound = value;
+                this.selectedSound = value;
                 OnPropertyChanged();
             }
         }
@@ -57,7 +59,7 @@ namespace BatykAudioPlayer.APP.AudioPlayer
             Sounds = new ObservableCollection<Sound>();
 
             this.timer = new DispatcherTimer();
-            this.timer.Interval = TimeSpan.FromSeconds(0.5);
+            this.timer.Interval = TimeSpan.FromSeconds(0.250);
             this.timer.Tick += OnTick;
             this.timer.Start();
 
@@ -86,7 +88,7 @@ namespace BatykAudioPlayer.APP.AudioPlayer
 
         private bool CanExecutePlay(object obj)
         {
-            return (this.currentSoundState != SoundState.Playing && this.currentSoundState != SoundState.Unknown);
+            return this.SelectedSound != null && (this.currentSoundState != SoundState.Unknown || this.currentSoundState == null);
         }
 
         private void ExecutePlay(object obj)

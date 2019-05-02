@@ -11,9 +11,9 @@ namespace BatykAudioPlayer.BL.SoundEngine
     /// </summary>
     public enum SoundState
     {
-        Unknown,
         Playing,
         Paused,
-        Stopped
+        Stopped,
+        Unknown
     }
 }

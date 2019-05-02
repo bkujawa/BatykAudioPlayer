@@ -10,7 +10,7 @@ namespace BatykAudioPlayer.BL.SoundEngine
     public class SoundEngine : ISoundEngine
     {
         private readonly MediaPlayer mediaPlayer;
-        private SoundState currentState;
+        private SoundState? currentState;
         private string currentPath;
 
         public event EventHandler<SoundEngineEventArgs> StateChanged;
@@ -25,7 +25,7 @@ namespace BatykAudioPlayer.BL.SoundEngine
         {
             try
             {
-                if (this.currentState != SoundState.Unknown)
+                if (this.currentState != SoundState.Unknown || this.currentState == null)
                 {
                     if (this.currentPath == path)
                     {
