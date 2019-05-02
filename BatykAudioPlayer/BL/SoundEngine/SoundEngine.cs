@@ -13,8 +13,8 @@ namespace BatykAudioPlayer.BL.SoundEngine
         private SoundState currentState;
         private string currentPath;
 
-        EventHandler<SoundEngineEventArgs> StateChanged;
-        EventHandler<SoundEngineErrorArgs> SoundError;
+        public event EventHandler<SoundEngineEventArgs> StateChanged;
+        public event EventHandler<SoundEngineErrorArgs> SoundError;
 
         public SoundEngine()
         {

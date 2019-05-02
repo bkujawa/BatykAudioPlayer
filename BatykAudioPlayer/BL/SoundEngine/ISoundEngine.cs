@@ -17,5 +17,7 @@ namespace BatykAudioPlayer.BL.SoundEngine
         void VolumeUp();
         void VolumeDown();
         void VolumeMute();
+        event EventHandler<SoundEngineEventArgs> StateChanged;
+        event EventHandler<SoundEngineErrorArgs> SoundError;
     }
 }
