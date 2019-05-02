@@ -45,6 +45,10 @@
                 Command="{Binding Pause}"
                 Content="Pause"
                 Style="{StaticResource ButtonStyle}" />
+            <Button
+                Command="{Binding Stop}"
+                Content="Stop"
+                Style="{StaticResource ButtonStyle}" />
         </StackPanel>
 
         <ListBox

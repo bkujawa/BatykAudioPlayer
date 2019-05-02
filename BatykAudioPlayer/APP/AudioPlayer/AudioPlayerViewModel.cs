@@ -91,6 +91,7 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         public ICommand Play { get; private set; }
         public ICommand Pause { get; private set; }
         public ICommand Open { get; private set; }
+        public ICommand Stop { get; private set; }
 
         #endregion
 
@@ -99,8 +100,7 @@ namespace BatykAudioPlayer.APP.AudioPlayer
             this.soundEngine = new SoundEngine();
             this.soundEngine.StateChanged += OnStateChanged;
             this.soundEngine.SoundError += OnSoundError;
-
-            this.filePlaylistManager = new FilePlaylistManager();
+            this.filePlaylistManager = new FilePlaylistManager(this);
 
             RegisterCommands();
 
@@ -112,33 +112,15 @@ namespace BatykAudioPlayer.APP.AudioPlayer
             this.timer.Tick += OnTick;
             this.timer.Start();
 
-            FillSoundsDirectory(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments));
+            this.filePlaylistManager.FillSoundsDirectory(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments));
         }
 
         private void RegisterCommands()
         {
             Play = new RelayCommand(ExecutePlay, CanExecutePlay);
             Pause = new RelayCommand(ExecutePause, CanExecutePause);
+            Stop = new RelayCommand(ExecuteStop, CanExecuteStop);
             Open = new RelayCommand(ExecuteOpen, CanExecuteOpen);
-        }
-
-        private void FillSoundsDirectory(string path)
-        {
-            if (!string.IsNullOrEmpty(path))
-            {
-                var allFiles = Directory.GetFiles(path);
-                var soundList = new List<Sound>();
-                foreach(var file in allFiles)
-                {
-                    var pathExtension = Path.GetExtension(file);
-                    if (pathExtension?.ToUpper() == ".MP3")
-                    {
-                        soundList.Add(new Sound(Path.GetFileNameWithoutExtension(file), file));
-                    }
-                }
-                Sounds.Clear();
-                soundList.ForEach(s => Sounds.Add(s));
-            }
         }
 
         private void OnSoundError(object sender, SoundEngineErrorArgs e)
@@ -153,25 +135,6 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         }
 
         #region ICommand implementation
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="obj"></param>
-        /// <returns></returns>
-        private bool CanExecutePause(object obj)
-        {
-            return this.currentSoundState == SoundState.Playing;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="obj"></param>
-        private void ExecutePause(object obj)
-        {
-            this.soundEngine.Pause();
-        }
 
         /// <summary>
         /// 
@@ -196,6 +159,44 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         /// 
         /// </summary>
         /// <param name="obj"></param>
+        /// <returns>True if <see cref="currentSoundState"/> is set on <see cref="SoundState.Playing"/></returns>
+        private bool CanExecutePause(object obj)
+        {
+            return this.currentSoundState == SoundState.Playing;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="obj"></param>
+        private void ExecutePause(object obj)
+        {
+            this.soundEngine.Pause();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        private bool CanExecuteStop(object obj)
+        {
+            return this.currentSoundState == SoundState.Playing || this.currentSoundState == SoundState.Paused;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="obj"></param>
+        private void ExecuteStop(object obj)
+        {
+            this.soundEngine.Stop();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="obj"></param>
         /// <returns></returns>
         private bool CanExecuteOpen(object obj)
         {
@@ -211,7 +212,7 @@ namespace BatykAudioPlayer.APP.AudioPlayer
             var dialog = new FolderBrowserDialog();
             dialog.ShowDialog();
             var dirPath = dialog.SelectedPath;
-            FillSoundsDirectory(dirPath);
+            this.filePlaylistManager.FillSoundsDirectory(dirPath);
         }
 
         #endregion
@@ -220,7 +221,7 @@ namespace BatykAudioPlayer.APP.AudioPlayer
 
         private void OnTick(object sender, EventArgs s)
         {
-            Progress = this.soundEngine.GetFilePosition();
+            UpdateProgress();
             UpdateTime();
         }
 
@@ -235,6 +236,11 @@ namespace BatykAudioPlayer.APP.AudioPlayer
             {
                 TimeInfo = $"{time.Item1.ToString(@"hh\:mm\:ss")} / {time.Item2.ToString(@"hh\:mm\:ss")}";
             }
+        }
+
+        private void UpdateProgress()
+        {
+            Progress = this.soundEngine.GetFilePosition();
         }
 
         #endregion
