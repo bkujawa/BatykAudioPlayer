@@ -47,8 +47,8 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         public AudioPlayerViewModel()
         {
             this.soundEngine = new SoundEngine();
-            this.soundEngine.StateChanged += null;
-            this.soundEngine.SoundError += null;
+            this.soundEngine.StateChanged += OnStateChanged;
+            this.soundEngine.SoundError += OnSoundError;
 
             Play = new RelayCommand(ExecutePlay, CanExecutePlay);
             Pause = new RelayCommand(ExecutePause, CanExecutePause);
@@ -60,6 +60,8 @@ namespace BatykAudioPlayer.APP.AudioPlayer
             this.timer.Interval = TimeSpan.FromSeconds(0.5);
             this.timer.Tick += OnTick;
             this.timer.Start();
+
+            FillSoundsDirectory(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments));
         }
 
         private void OnTick(object sender, EventArgs s)
@@ -122,6 +124,17 @@ namespace BatykAudioPlayer.APP.AudioPlayer
                 Sounds.Clear();
                 soundList.ForEach(s => Sounds.Add(s));
             }
+        }
+
+        private void OnSoundError(object sender, SoundEngineErrorArgs e)
+        {
+            MessageBox.Show(e.ErrorDetails, "Sound error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
+        private void OnStateChanged(object sender, SoundEngineEventArgs e)
+        {
+            this.currentSoundState = e.NewState;
+            UpdateTime();
         }
     }
 }
