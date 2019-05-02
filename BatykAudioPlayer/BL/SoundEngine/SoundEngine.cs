@@ -12,6 +12,11 @@ namespace BatykAudioPlayer.BL.SoundEngine
         private readonly MediaPlayer mediaPlayer;
         private SoundState currentState;
 
+        public SoundEngine()
+        {
+            this.mediaPlayer = new MediaPlayer();
+        }
+
         public void Pause()
         {
             throw new NotImplementedException();
