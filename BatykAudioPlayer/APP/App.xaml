@@ -7,7 +7,7 @@
     <Application.Resources>
         <Style x:Key="ButtonStyle" TargetType="{x:Type Button}">
             <Setter Property="Height" Value="30" />
-            <Setter Property="Margin" Value="1,0,0,0" />
+            <Setter Property="Margin" Value="0,0,1,0" />
             <Setter Property="FontWeight" Value="Bold" />
             <Setter Property="FontSize" Value="18" />
         </Style>

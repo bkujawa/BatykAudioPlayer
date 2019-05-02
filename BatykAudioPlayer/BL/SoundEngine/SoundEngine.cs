@@ -18,8 +18,12 @@ namespace BatykAudioPlayer.BL.SoundEngine
 
         #endregion
 
+        #region Event handlers
+
         public event EventHandler<SoundEngineEventArgs> StateChanged;
         public event EventHandler<SoundEngineErrorArgs> SoundError;
+
+        #endregion
 
         #region Constructor
 
@@ -66,7 +70,7 @@ namespace BatykAudioPlayer.BL.SoundEngine
                 this.mediaPlayer.Pause();
                 OnStateChanged(SoundState.Paused);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 OnStateChanged(SoundState.Unknown);
                 OnError(ex.Message);
@@ -80,7 +84,7 @@ namespace BatykAudioPlayer.BL.SoundEngine
                 this.mediaPlayer.Stop();
                 OnStateChanged(SoundState.Stopped);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 OnStateChanged(SoundState.Unknown);
                 OnError(ex.Message);
@@ -104,7 +108,7 @@ namespace BatykAudioPlayer.BL.SoundEngine
 
         public Tuple<TimeSpan, TimeSpan> GetTimePosition()
         {
-            if (this.currentState != SoundState.Playing || this.currentState != SoundState.Paused)
+            if (this.currentState == null || this.currentState == SoundState.Unknown || this.currentState == SoundState.Stopped)
             {
                 return null;
             }
@@ -117,7 +121,7 @@ namespace BatykAudioPlayer.BL.SoundEngine
 
         public double GetFilePosition()
         {
-            if (this.currentState != SoundState.Playing || this.currentState != SoundState.Paused)
+            if (this.currentState == null || this.currentState == SoundState.Unknown || this.currentState == SoundState.Stopped)
             {
                 return 0;
             }
