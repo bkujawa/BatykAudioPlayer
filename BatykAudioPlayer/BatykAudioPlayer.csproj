@@ -65,6 +65,8 @@
     </Compile>
     <Compile Include="APP\AudioPlayer\AudioPlayerViewModel.cs" />
     <Compile Include="APP\ViewModelBase.cs" />
+    <Compile Include="BL\FilePlaylistManager\FilePlaylistManager.cs" />
+    <Compile Include="BL\FilePlaylistManager\IFilePlaylistManager.cs" />
     <Compile Include="BL\RelayCommand.cs" />
     <Compile Include="BL\SoundEngine\ISoundEngine.cs" />
     <Compile Include="BL\SoundEngine\Sound.cs" />
