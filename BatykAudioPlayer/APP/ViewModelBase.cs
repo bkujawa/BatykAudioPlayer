@@ -12,7 +12,7 @@ namespace BatykAudioPlayer.APP
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public ViewModelBase([CallerMemberName] string propertyName = null)
+        public virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

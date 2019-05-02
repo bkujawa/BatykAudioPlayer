@@ -51,11 +51,11 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <ApplicationDefinition Include="App.xaml">
+    <ApplicationDefinition Include="APP\App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="App.xaml.cs">
+    <Compile Include="APP\App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
@@ -64,6 +64,7 @@
     </Compile>
     <Compile Include="APP\AudioPlayer\AudioPlayerViewModel.cs" />
     <Compile Include="APP\ViewModelBase.cs" />
+    <Compile Include="BL\RelayCommand.cs" />
     <Compile Include="BL\SoundEngine\ISoundEngine.cs" />
     <Compile Include="BL\SoundEngine\Sound.cs" />
     <Compile Include="BL\SoundEngine\SoundEngine.cs" />
@@ -93,7 +94,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="APP\App.config" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="APP\AudioPlayer\AudioPlayerView.xaml">
