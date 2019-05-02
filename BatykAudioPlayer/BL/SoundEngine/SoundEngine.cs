@@ -75,7 +75,16 @@ namespace BatykAudioPlayer.BL.SoundEngine
 
         public void Stop()
         {
-            throw new NotImplementedException();
+            try
+            {
+                this.mediaPlayer.Stop();
+                OnStateChanged(SoundState.Stopped);
+            }
+            catch(Exception ex)
+            {
+                OnStateChanged(SoundState.Unknown);
+                OnError(ex.Message);
+            }
         }
 
         public void VolumeDown()
