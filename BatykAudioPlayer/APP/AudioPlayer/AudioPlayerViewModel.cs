@@ -92,6 +92,8 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         public ICommand Pause { get; private set; }
         public ICommand Open { get; private set; }
         public ICommand Stop { get; private set; }
+        public ICommand PlayNext { get; private set; }
+        public ICommand PlayPrevious { get; private set; }
 
         #endregion
 
@@ -108,7 +110,7 @@ namespace BatykAudioPlayer.APP.AudioPlayer
             Playlists = new ObservableCollection<Sound>();
 
             this.timer = new DispatcherTimer();
-            this.timer.Interval = TimeSpan.FromSeconds(0.250);
+            this.timer.Interval = TimeSpan.FromSeconds(0.05);
             this.timer.Tick += OnTick;
             this.timer.Start();
 
@@ -121,6 +123,8 @@ namespace BatykAudioPlayer.APP.AudioPlayer
             Pause = new RelayCommand(ExecutePause, CanExecutePause);
             Stop = new RelayCommand(ExecuteStop, CanExecuteStop);
             Open = new RelayCommand(ExecuteOpen, CanExecuteOpen);
+            PlayPrevious = new RelayCommand(ExecutePlayPrevious, CanExecutePlayPrevious);
+            PlayNext = new RelayCommand(ExecutePlayNext, CanExecutePlayNext);
         }
 
         private void OnSoundError(object sender, SoundEngineErrorArgs e)
@@ -215,6 +219,55 @@ namespace BatykAudioPlayer.APP.AudioPlayer
             this.filePlaylistManager.FillSoundsDirectory(dirPath);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        private bool CanExecutePlayPrevious(object obj)
+        {
+            if (SelectedSound == null)
+            {
+                return false;
+            }
+            var index = Sounds.IndexOf(SelectedSound);
+            return index > 0;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="obj"></param>
+        private void ExecutePlayPrevious(object obj)
+        {
+            this.soundEngine.Stop();
+            var index = Sounds.IndexOf(SelectedSound);
+            SelectedSound = Sounds[--index];
+            this.soundEngine.Play(SelectedSound.Path);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        private bool CanExecutePlayNext(object obj)
+        {
+            if (SelectedSound == null)
+            {
+                return false;
+            }
+            var index = Sounds.IndexOf(SelectedSound);
+            return index < Sounds.Count - 1;
+        }
+
+        private void ExecutePlayNext(object obj)
+        {
+            this.soundEngine.Stop();
+            var index = Sounds.IndexOf(SelectedSound);
+            SelectedSound = Sounds[++index];
+            this.soundEngine.Play(SelectedSound.Path);
+        }
         #endregion
 
         #region Pivate helper methods
