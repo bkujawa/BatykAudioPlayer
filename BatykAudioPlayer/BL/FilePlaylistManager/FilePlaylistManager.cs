@@ -18,10 +18,32 @@ namespace BatykAudioPlayer.BL.FilePlaylistManager
 
         #endregion
 
+        #region Constructor
+
+        public FilePlaylistManager(object sender)
+        {
+            SetViewModel(sender);
+        }
+
+        #endregion
+
         #region IFilePlaylistManager implementation
+
         public void FillPlaylist()
         {
-            throw new NotImplementedException();
+            string docPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "AudioPlayer");
+            var playlists = new List<Sound>();
+            var allFiles = Directory.GetFiles(docPath);
+            foreach (var file in allFiles)
+            {
+                var pathExtension = Path.GetExtension(file);
+                if (pathExtension?.ToUpper() == ".TXT")
+                {
+                    playlists.Add(new Sound(Path.GetFileNameWithoutExtension(file), file));
+                }
+            }
+            APViewModel.Playlists.Clear();
+            playlists.ForEach(s => APViewModel.Playlists.Add(s));
         }
 
         public void FillSoundsDirectory(string dirPath)
@@ -51,15 +73,6 @@ namespace BatykAudioPlayer.BL.FilePlaylistManager
         public void SetDefualtPlaylist(string listPath)
         {
             throw new NotImplementedException();
-        }
-
-        #endregion
-
-        #region Constructor
-
-        public FilePlaylistManager(object sender)
-        {
-            SetViewModel(sender);
         }
 
         #endregion
