@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Configuration;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Threading;
 using BatykAudioPlayer.BL;
@@ -20,10 +24,11 @@ namespace BatykAudioPlayer.APP.AudioPlayer
 
         public ICommand Play { get; private set; }
         public ICommand Pause { get; private set; }
+        public ICommand Open { get; private set; }
 
         #endregion
 
-        #region Public Properties
+        #region Properties
 
         public Sound SelectedSound
         {
@@ -35,15 +40,21 @@ namespace BatykAudioPlayer.APP.AudioPlayer
             }
         }
 
+        public ObservableCollection<Sound> Sounds { get; private set; }
+
         #endregion
+
         public AudioPlayerViewModel()
         {
             this.soundEngine = new SoundEngine();
             this.soundEngine.StateChanged += null;
             this.soundEngine.SoundError += null;
 
-            Play = new RelayCommand(null, null);
-            Pause = new RelayCommand(null, null);
+            Play = new RelayCommand(ExecutePlay, CanExecutePlay);
+            Pause = new RelayCommand(ExecutePause, CanExecutePause);
+            Open = new RelayCommand(ExecuteOpen, CanExecuteOpen);
+
+            Sounds = new ObservableCollection<Sound>();
 
             this.timer = new DispatcherTimer();
             this.timer.Interval = TimeSpan.FromSeconds(0.5);
@@ -79,6 +90,38 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         private void ExecutePlay(object obj)
         {
             this.soundEngine.Play(SelectedSound.Path);
+        }
+
+        private bool CanExecuteOpen(object obj)
+        {
+            return true;
+        }
+
+        private void ExecuteOpen(object obj)
+        {
+            var dialog = new FolderBrowserDialog();
+            dialog.ShowDialog();
+            var dirPath = dialog.SelectedPath;
+            FillSoundsDirectory(dirPath);
+        }
+
+        private void FillSoundsDirectory(string path)
+        {
+            if (!string.IsNullOrEmpty(path))
+            {
+                var allFiles = Directory.GetFiles(path);
+                var soundList = new List<Sound>();
+                foreach(var file in allFiles)
+                {
+                    var pathExtension = Path.GetExtension(file);
+                    if (pathExtension?.ToUpper() == ".MP3")
+                    {
+                        soundList.Add(new Sound(Path.GetFileNameWithoutExtension(file), file));
+                    }
+                }
+                Sounds.Clear();
+                soundList.ForEach(s => Sounds.Add(s));
+            }
         }
     }
 }
