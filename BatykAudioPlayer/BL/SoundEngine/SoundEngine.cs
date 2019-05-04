@@ -15,6 +15,29 @@ namespace BatykAudioPlayer.BL.SoundEngine
         private readonly MediaPlayer mediaPlayer;
         private SoundState? currentState;
         private string currentPath;
+        private double volume;
+
+        #endregion
+
+        #region Properties
+
+        public double Volume
+        {
+            get => this.volume;
+            set
+            {              
+                this.volume = value;
+                if (this.volume > 1)
+                {
+                    this.volume = 1;
+                }
+                else if (this.volume < 0)
+                {
+                    this.volume = 0;
+                }
+                this.mediaPlayer.Volume = volume;
+            }
+        }
 
         #endregion
 
@@ -30,6 +53,22 @@ namespace BatykAudioPlayer.BL.SoundEngine
         public SoundEngine()
         {
             this.mediaPlayer = new MediaPlayer();
+            this.volume = this.mediaPlayer.Volume;
+        }
+
+        #endregion
+
+        #region Event handlers methods
+
+        private void OnStateChanged(SoundState newState)
+        {
+            this.currentState = newState;
+            StateChanged?.Invoke(this, new SoundEngineEventArgs(newState));
+        }
+
+        private void OnError(string error)
+        {
+            SoundError?.Invoke(this, new SoundEngineErrorArgs(error));
         }
 
         #endregion
@@ -90,21 +129,6 @@ namespace BatykAudioPlayer.BL.SoundEngine
                 OnError(ex.Message);
             }
         }
-        public void VolumeUp()
-        {
-            if (this.mediaPlayer.Volume < 1)
-            {
-                this.mediaPlayer.Volume += 0.1;
-            }
-        }
-
-        public void VolumeDown()
-        {
-            if (this.mediaPlayer.Volume > 0)
-            {
-                this.mediaPlayer.Volume -= 0.1;
-            }
-        }
 
         public void VolumeMute()
         {
@@ -146,20 +170,6 @@ namespace BatykAudioPlayer.BL.SoundEngine
 
         #endregion
 
-        #region Private helpers
-
-        private void OnStateChanged(SoundState newState)
-        {
-            this.currentState = newState;
-            StateChanged?.Invoke(this, new SoundEngineEventArgs(newState));
-        }
-
-        private void OnError(string error)
-        {
-            SoundError?.Invoke(this, new SoundEngineErrorArgs(error));
-        }
-
-        #endregion
     }
 
     public class SoundEngineEventArgs : EventArgs

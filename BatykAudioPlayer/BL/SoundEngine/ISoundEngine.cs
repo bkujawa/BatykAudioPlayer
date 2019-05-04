@@ -30,16 +30,6 @@ namespace BatykAudioPlayer.BL.SoundEngine
         /// <summary>
         /// 
         /// </summary>
-        void VolumeUp();
-
-        /// <summary>
-        /// 
-        /// </summary>
-        void VolumeDown();
-
-        /// <summary>
-        /// 
-        /// </summary>
         void VolumeMute();
 
         /// <summary>
@@ -63,5 +53,10 @@ namespace BatykAudioPlayer.BL.SoundEngine
         /// 
         /// </summary>
         event EventHandler<SoundEngineErrorArgs> SoundError;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        double Volume { get; set; }
     }
 }
