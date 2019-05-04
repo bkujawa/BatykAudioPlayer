@@ -4,32 +4,16 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BatykAudioPlayer.APP;
-using BatykAudioPlayer.APP.AudioPlayer;
 using BatykAudioPlayer.BL.SoundEngine;
+using System.Configuration;
 
 namespace BatykAudioPlayer.BL.FilePlaylistManager
 {
     public class FilePlaylistManager : IFilePlaylistManager
     {
-        #region Private fields
-
-        private AudioPlayerViewModel APViewModel;
-
-        #endregion
-
-        #region Constructor
-
-        public FilePlaylistManager(object sender)
-        {
-            SetViewModel(sender);
-        }
-
-        #endregion
-
         #region IFilePlaylistManager implementation
 
-        public void FillPlaylist()
+        public List<Sound> FillPlaylist()
         {
             string docPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "AudioPlayer");
             var playlists = new List<Sound>();
@@ -42,11 +26,10 @@ namespace BatykAudioPlayer.BL.FilePlaylistManager
                     playlists.Add(new Sound(Path.GetFileNameWithoutExtension(file), file));
                 }
             }
-            APViewModel.Playlists.Clear();
-            playlists.ForEach(s => APViewModel.Playlists.Add(s));
+            return playlists;
         }
 
-        public void FillSoundsDirectory(string dirPath)
+        public List<Sound> FillSoundsFromDirectory(string dirPath)
         {
             if (!string.IsNullOrEmpty(dirPath))
             {
@@ -60,34 +43,50 @@ namespace BatykAudioPlayer.BL.FilePlaylistManager
                         soundList.Add(new Sound(Path.GetFileNameWithoutExtension(file), file));
                     }
                 }
-                APViewModel.Sounds.Clear();
-                soundList.ForEach(c => APViewModel.Sounds.Add(c));
+                return soundList;
             }
+            return null;
         }
 
         public void SetDefaultDirectory(string dirPath)
         {
-            throw new NotImplementedException();
+            if (!string.IsNullOrEmpty(dirPath))
+            {
+                var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+                if (config.AppSettings.Settings["DirPath"] != null)
+                {
+                    config.AppSettings.Settings["DirPath"].Value = dirPath;
+                }
+                else
+                {
+                    config.AppSettings.Settings.Add(new KeyValueConfigurationElement("DirPath", dirPath));
+                }
+                ConfigurationManager.AppSettings["DirPath"] = dirPath;
+                config.Save(ConfigurationSaveMode.Full);
+            }
         }
 
-        public void SetDefualtPlaylist(string listPath)
+        public void SetDefualtPlaylist(string dirPath)
         {
-            throw new NotImplementedException();
+            if (!string.IsNullOrEmpty(dirPath))
+            {
+                var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+                if (config.AppSettings.Settings["PlaylistPath"] != null)
+                {
+                    config.AppSettings.Settings["PlaylistPath"].Value = dirPath;
+                }
+                else
+                {
+                    config.AppSettings.Settings.Add(new KeyValueConfigurationElement("PlaylistPath", dirPath));
+                }
+                ConfigurationManager.AppSettings["PlaylistPath"] = dirPath;
+                config.Save(ConfigurationSaveMode.Full);
+            }
         }
 
         #endregion
 
         #region Private helpers
-
-        private void SetViewModel(object sender)
-        {
-            switch (sender)
-            {
-                case AudioPlayerViewModel apvm:
-                    APViewModel = (AudioPlayerViewModel)apvm;
-                    break;
-            }
-        }
 
         #endregion
     }
