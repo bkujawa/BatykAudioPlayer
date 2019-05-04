@@ -22,12 +22,15 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         private ISoundEngine soundEngine;
         private IFilePlaylistManager filePlaylistManager;
         private SoundState? currentSoundState;
+        private AudioPlayerState currentAudioPlayerState;
         private DispatcherTimer timer;
         private Sound selectedSound;
+        private Sound currentSound;
         private Sound selectedPlaylist;
         private double progress;
         private string timeInfo;
         private string mute = "Mute";
+        Random random;
 
         #endregion
 
@@ -108,6 +111,10 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         public ICommand VolumeUp { get; private set; }
         public ICommand VolumeDown { get; private set; }
         public ICommand VolumeMute { get; private set; }
+        public ICommand RepeatShuffle { get; private set; }
+        public ICommand RepeatSound { get; private set; }
+        public ICommand RepeatPlaylist { get; private set; }
+        public ICommand RepeatNormal { get; private set; }
 
         #endregion
 
@@ -167,6 +174,7 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         private void ExecutePlay(object obj)
         {
             this.soundEngine.Play(SelectedSound.Path);
+            this.currentSound = SelectedSound;
         }
 
         /// <summary>
@@ -241,6 +249,10 @@ namespace BatykAudioPlayer.APP.AudioPlayer
             {
                 return false;
             }
+            if (currentAudioPlayerState == AudioPlayerState.Shuffled || currentAudioPlayerState == AudioPlayerState.RepeatPlaylist)
+            {
+                return true;
+            }
             var index = Sounds.IndexOf(SelectedSound);
             return index > 0;
         }
@@ -252,9 +264,18 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         private void ExecutePlayPrevious(object obj)
         {
             this.soundEngine.Stop();
+            if (this.currentAudioPlayerState == AudioPlayerState.Shuffled)
+            {
+                var randomSound = random.Next(0, Sounds.Count);
+                SelectedSound = Sounds[randomSound];
+                this.currentSound = SelectedSound;
+                this.soundEngine.Play(SelectedSound.Path);
+                return;
+            }
             var index = Sounds.IndexOf(SelectedSound);
             SelectedSound = Sounds[--index];
             this.soundEngine.Play(SelectedSound.Path);
+            this.currentSound = SelectedSound;
         }
 
         /// <summary>
@@ -268,6 +289,10 @@ namespace BatykAudioPlayer.APP.AudioPlayer
             {
                 return false;
             }
+            if (currentAudioPlayerState == AudioPlayerState.Shuffled || currentAudioPlayerState == AudioPlayerState.RepeatPlaylist)
+            {
+                return true;
+            }
             var index = Sounds.IndexOf(SelectedSound);
             return index < Sounds.Count - 1;
         }
@@ -279,9 +304,18 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         private void ExecutePlayNext(object obj)
         {
             this.soundEngine.Stop();
+            if (this.currentAudioPlayerState == AudioPlayerState.Shuffled)
+            {
+                var randomSound = random.Next(0, Sounds.Count);
+                SelectedSound = Sounds[randomSound];
+                this.currentSound = SelectedSound;
+                this.soundEngine.Play(SelectedSound.Path);
+                return;
+            }
             var index = Sounds.IndexOf(SelectedSound);
             SelectedSound = Sounds[++index];
             this.soundEngine.Play(SelectedSound.Path);
+            this.currentSound = SelectedSound;
         }
 
         /// <summary>
@@ -356,6 +390,67 @@ namespace BatykAudioPlayer.APP.AudioPlayer
                 Mute = "Mute";
             }
         }
+
+        private bool CanExecuteRepeatShuffle(object obj)
+        {
+            if (this.currentAudioPlayerState == AudioPlayerState.Shuffled)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        private void ExecuteRepeatShuffle(object obj)
+        {
+            this.currentAudioPlayerState = AudioPlayerState.Shuffled;
+            this.soundEngine.SetMediaEndedEvent(NextSoundRepeatShuffled);
+        }
+
+        private bool CanExecuteRepeatSound(object obj)
+        {
+            if (this.currentAudioPlayerState == AudioPlayerState.RepeatSound)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        private void ExecuteRepeatSound(object obj)
+        {
+            this.currentAudioPlayerState = AudioPlayerState.RepeatSound;
+            this.soundEngine.SetMediaEndedEvent(NextSoundRepeatSound);
+        }
+
+        private bool CanExecuteRepeatPlaylist(object obj)
+        {
+            if (this.currentAudioPlayerState == AudioPlayerState.RepeatPlaylist)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        private void ExecuteRepeatPlaylist(object obj)
+        {
+            this.currentAudioPlayerState = AudioPlayerState.RepeatPlaylist;
+            this.soundEngine.SetMediaEndedEvent(NextSoundRepeatPlaylist);
+        }
+
+        private bool CanExecuteRepeatNormal(object obj)
+        {
+            if (this.currentAudioPlayerState == AudioPlayerState.Normal)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        private void ExecuteRepeatNormal(object obj)
+        {
+            this.currentAudioPlayerState = AudioPlayerState.Normal;
+            this.soundEngine.SetMediaEndedEvent(NextSoundRepeatNormal);
+        }
+
         #endregion
 
         #region Pivate helper methods
@@ -371,6 +466,10 @@ namespace BatykAudioPlayer.APP.AudioPlayer
             VolumeUp = new RelayCommand(ExecuteVolumeUp, CanExecuteVolumeUp);
             VolumeDown = new RelayCommand(ExecuteVolumeDown, CanExecuteVolumeDown);
             VolumeMute = new RelayCommand(ExecuteVolumeMute, CanExecuteVolumeMute);
+            RepeatShuffle = new RelayCommand(ExecuteRepeatShuffle, CanExecuteRepeatShuffle);
+            RepeatSound = new RelayCommand(ExecuteRepeatSound, CanExecuteRepeatSound);
+            RepeatPlaylist = new RelayCommand(ExecuteRepeatPlaylist, CanExecuteRepeatPlaylist);
+            RepeatNormal = new RelayCommand(ExecuteRepeatNormal, CanExecuteRepeatNormal);
         }
 
         private void OnTick(object sender, EventArgs s)
@@ -421,6 +520,7 @@ namespace BatykAudioPlayer.APP.AudioPlayer
             this.soundEngine = new SoundEngine();
             this.soundEngine.StateChanged += OnStateChanged;
             this.soundEngine.SoundError += OnSoundError;
+            this.soundEngine.SetMediaEndedEvent(NextSoundRepeatNormal);
 
             this.filePlaylistManager = new FilePlaylistManager();
             this.filePlaylistManager.StateChanged += OnStateChanged;
@@ -433,6 +533,57 @@ namespace BatykAudioPlayer.APP.AudioPlayer
             this.timer.Interval = TimeSpan.FromSeconds(0.1);
             this.timer.Tick += OnTick;
             this.timer.Start();
+
+            random = new Random();
+        }
+
+        #endregion
+
+        #region MediaPlayer.MediaEnded event handlers
+
+        private void NextSoundRepeatNormal(object sender, EventArgs e)
+        {
+            var index = Sounds.IndexOf(this.currentSound);
+            if (index < Sounds.Count - 1)
+            {
+                this.currentSound = Sounds[++index];
+                SelectedSound = this.currentSound;
+                this.soundEngine.Stop();
+                this.soundEngine.Play(this.currentSound.Path);
+            }
+        }
+
+        private void NextSoundRepeatShuffled(object sender, EventArgs e)
+        {
+            var randomSound = random.Next(0, Sounds.Count);
+            this.currentSound = Sounds[randomSound];
+            SelectedSound = this.currentSound;
+            this.soundEngine.Stop();
+            this.soundEngine.Play(currentSound.Path);
+        }
+
+        private void NextSoundRepeatSound(object sender, EventArgs e)
+        {
+            this.soundEngine.Stop();
+            this.soundEngine.Play(this.currentSound.Path);
+        }
+
+        private void NextSoundRepeatPlaylist(object sender, EventArgs e)
+        {
+            var index = Sounds.IndexOf(this.currentSound);
+            if (index < Sounds.Count - 1)
+            {
+                this.currentSound = Sounds[++index];
+                this.soundEngine.Stop();
+                this.soundEngine.Play(this.currentSound.Path);
+            }
+            else
+            {
+                this.currentSound = Sounds[0];
+                this.soundEngine.Stop();
+                this.soundEngine.Play(this.currentSound.Path);
+            }
+            SelectedSound = this.currentSound;
         }
 
         #endregion
