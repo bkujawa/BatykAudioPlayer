@@ -102,7 +102,7 @@ namespace BatykAudioPlayer.APP.AudioPlayer
             this.soundEngine = new SoundEngine();
             this.soundEngine.StateChanged += OnStateChanged;
             this.soundEngine.SoundError += OnSoundError;
-            this.filePlaylistManager = new FilePlaylistManager(this);
+            this.filePlaylistManager = new FilePlaylistManager();
 
             RegisterCommands();
 
@@ -110,11 +110,11 @@ namespace BatykAudioPlayer.APP.AudioPlayer
             Playlists = new ObservableCollection<Sound>();
 
             this.timer = new DispatcherTimer();
-            this.timer.Interval = TimeSpan.FromSeconds(0.05);
+            this.timer.Interval = TimeSpan.FromSeconds(0.1);
             this.timer.Tick += OnTick;
             this.timer.Start();
 
-            this.filePlaylistManager.FillSoundsDirectory(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments));
+            this.filePlaylistManager.FillSoundsFromDirectory(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments));
         }
 
         private void RegisterCommands()
@@ -216,7 +216,8 @@ namespace BatykAudioPlayer.APP.AudioPlayer
             var dialog = new FolderBrowserDialog();
             dialog.ShowDialog();
             var dirPath = dialog.SelectedPath;
-            this.filePlaylistManager.FillSoundsDirectory(dirPath);
+            var sounds = this.filePlaylistManager.FillSoundsFromDirectory(dirPath);
+            RefreshPlaylist(sounds);
         }
 
         /// <summary>
@@ -261,6 +262,10 @@ namespace BatykAudioPlayer.APP.AudioPlayer
             return index < Sounds.Count - 1;
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="obj"></param>
         private void ExecutePlayNext(object obj)
         {
             this.soundEngine.Stop();
@@ -294,6 +299,12 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         private void UpdateProgress()
         {
             Progress = this.soundEngine.GetFilePosition();
+        }
+
+        private void RefreshPlaylist(List<Sound> sounds)
+        {
+            Sounds.Clear();
+            sounds.ForEach(s => Sounds.Add(s));
         }
 
         #endregion
