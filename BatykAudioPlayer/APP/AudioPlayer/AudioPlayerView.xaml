@@ -27,7 +27,7 @@
         <Button
             HorizontalAlignment="Left"
             Command="{Binding Open}"
-            Content="Menu"
+            Content="OpenDirectory"
             Style="{StaticResource MenuButtonStyle}" />
 
         <StackPanel
@@ -56,6 +56,18 @@
                 Command="{Binding PlayNext}"
                 Content="Next"
                 Style="{StaticResource ButtonStyle}" />
+            <Button 
+                Command="{Binding VolumeUp}"
+                Content="Volume +"
+                Style="{StaticResource ButtonStyle}" />
+            <Button 
+                Command="{Binding VolumeDown}"
+                Content="Volume -"
+                Style="{StaticResource ButtonStyle}" />
+            <Button 
+                Command="{Binding VolumeMute}"
+                Content="{Binding Mute}"
+                Style="{StaticResource ButtonStyle}" />
         </StackPanel>
 
         <ProgressBar
@@ -77,5 +89,13 @@
             ItemsSource="{Binding Sounds}"
             SelectedItem="{Binding SelectedSound}"
             Style="{StaticResource SoundListStyle}" />
+
+        <GridSplitter 
+            Grid.Row="5"
+            Grid.Column="1"
+            VerticalAlignment="Stretch"
+            HorizontalAlignment="Center"
+            ShowsPreview="False"
+            Width="4" />
     </Grid>
 </Window>
