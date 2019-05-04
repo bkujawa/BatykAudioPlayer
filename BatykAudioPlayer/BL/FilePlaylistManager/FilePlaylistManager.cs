@@ -11,6 +11,46 @@ namespace BatykAudioPlayer.BL.FilePlaylistManager
 {
     public class FilePlaylistManager : IFilePlaylistManager
     {
+        #region Private fields
+
+        private string defaultDirectory;
+        private string defaultPlaylist;
+
+        #endregion
+
+        #region Public properties
+
+        #endregion
+
+        #region Event handlers
+
+        public event EventHandler<FilePlaylistManagerEventArgs> StateChanged;
+        public event EventHandler<FilePlaylistManagerErrorArgs> FilePlaylistError;
+
+        #endregion
+
+        #region Constructor
+
+        public FilePlaylistManager()
+        {
+            defaultDirectory = CheckDefaultDirectory();
+        }
+        #endregion
+
+        #region Event handlers methods
+
+        private void OnStateChanged(List<Sound> NewSounds)
+        {
+            StateChanged?.Invoke(this, new FilePlaylistManagerEventArgs(NewSounds));
+        }
+
+        private void OnError(string error)
+        {
+            FilePlaylistError?.Invoke(this, new FilePlaylistManagerErrorArgs(error));
+        }
+
+        #endregion
+
         #region IFilePlaylistManager implementation
 
         public List<Sound> FillPlaylist()
@@ -29,7 +69,7 @@ namespace BatykAudioPlayer.BL.FilePlaylistManager
             return playlists;
         }
 
-        public List<Sound> FillSoundsFromDirectory(string dirPath)
+        public void FillSoundsFromDirectory(string dirPath)
         {
             if (!string.IsNullOrEmpty(dirPath))
             {
@@ -43,9 +83,34 @@ namespace BatykAudioPlayer.BL.FilePlaylistManager
                         soundList.Add(new Sound(Path.GetFileNameWithoutExtension(file), file));
                     }
                 }
-                return soundList;
+                OnStateChanged(soundList);
             }
-            return null;
+            else
+            {
+                OnStateChanged(null);
+            }
+        }
+
+        public void FillSoundsFromDefaultDirectory()
+        {
+            if (!string.IsNullOrEmpty(defaultDirectory))
+            {
+                var allFiles = Directory.GetFiles(defaultDirectory);
+                var soundList = new List<Sound>();
+                foreach (var file in allFiles)
+                {
+                    var pathExtension = Path.GetExtension(file);
+                    if (pathExtension?.ToUpper() == ".MP3")
+                    {
+                        soundList.Add(new Sound(Path.GetFileNameWithoutExtension(file), file));
+                    }
+                }
+                OnStateChanged(soundList);
+            }
+            else
+            {
+                OnStateChanged(null);
+            }
         }
 
         public void SetDefaultDirectory(string dirPath)
@@ -63,6 +128,7 @@ namespace BatykAudioPlayer.BL.FilePlaylistManager
                 }
                 ConfigurationManager.AppSettings["DirPath"] = dirPath;
                 config.Save(ConfigurationSaveMode.Full);
+                this.defaultDirectory = dirPath;
             }
         }
 
@@ -81,13 +147,52 @@ namespace BatykAudioPlayer.BL.FilePlaylistManager
                 }
                 ConfigurationManager.AppSettings["PlaylistPath"] = dirPath;
                 config.Save(ConfigurationSaveMode.Full);
+                this.defaultPlaylist = dirPath;
             }
+        }
+
+        public bool CheckIfDefaultDirectoryIsSet()
+        {
+            if (string.IsNullOrEmpty(defaultDirectory))
+            {
+                return false;
+            }
+            return true;
         }
 
         #endregion
 
         #region Private helpers
 
+        private string CheckDefaultDirectory()
+        {
+            var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            var directory = config.AppSettings.Settings["DirPath"]?.Value;
+            if (string.IsNullOrEmpty(directory))
+            {
+                return null;
+            }
+            return directory;
+        }
+
         #endregion
+    }
+
+    public class FilePlaylistManagerEventArgs : EventArgs
+    {
+        public List<Sound> NewSounds { get; private set; }
+        public FilePlaylistManagerEventArgs(List<Sound> NewSounds)
+        {
+            this.NewSounds = NewSounds;
+        }
+    }
+
+    public class FilePlaylistManagerErrorArgs
+    {
+        public string ErrorDetails { get; private set; }
+        public FilePlaylistManagerErrorArgs(string ErrorDetails)
+        {
+            this.ErrorDetails = ErrorDetails;
+        }
     }
 }

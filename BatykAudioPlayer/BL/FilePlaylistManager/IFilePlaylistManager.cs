@@ -12,7 +12,13 @@ namespace BatykAudioPlayer.BL.FilePlaylistManager
         /// 
         /// </summary>
         /// <param name="dirPath"></param>
-        List<Sound> FillSoundsFromDirectory(string dirPath);
+        void FillSoundsFromDirectory(string dirPath);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        void FillSoundsFromDefaultDirectory();
 
         /// <summary>
         /// 
@@ -31,5 +37,19 @@ namespace BatykAudioPlayer.BL.FilePlaylistManager
         /// <param name="listPath"></param>
         void SetDefualtPlaylist(string listPath);
 
+        /// <summary>
+        /// 
+        /// </summary>
+        bool CheckIfDefaultDirectoryIsSet();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        event EventHandler<FilePlaylistManagerEventArgs> StateChanged;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        event EventHandler<FilePlaylistManagerErrorArgs> FilePlaylistError;
     }
 }
