@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
+using BatykAudioPlayer.APP.AudioPlayer;
 
 namespace BatykAudioPlayer.BL.SoundEngine
 {
@@ -14,6 +15,7 @@ namespace BatykAudioPlayer.BL.SoundEngine
 
         private readonly MediaPlayer mediaPlayer;
         private SoundState? currentState;
+        private AudioPlayerState currentAudioPlayerState;
         private string currentPath;
         private double volume;
 
@@ -45,6 +47,7 @@ namespace BatykAudioPlayer.BL.SoundEngine
 
         public event EventHandler<SoundEngineEventArgs> StateChanged;
         public event EventHandler<SoundEngineErrorArgs> SoundError;
+        private event EventHandler MediaEnded;
 
         #endregion
 
@@ -167,6 +170,20 @@ namespace BatykAudioPlayer.BL.SoundEngine
             }
             return 0;
         }
+
+        public void SetMediaEndedEvent(EventHandler eventHandler)
+        {
+            if (MediaEnded != null)
+            {
+                this.mediaPlayer.MediaEnded -= MediaEnded;
+            }
+            MediaEnded = eventHandler;
+            this.mediaPlayer.MediaEnded += MediaEnded;
+        }
+
+        #endregion
+
+        #region Private helpers
 
         #endregion
 
