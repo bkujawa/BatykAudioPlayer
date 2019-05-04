@@ -27,6 +27,7 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         private Sound selectedPlaylist;
         private double progress;
         private string timeInfo;
+        private string mute = "Mute";
 
         #endregion
 
@@ -72,6 +73,16 @@ namespace BatykAudioPlayer.APP.AudioPlayer
             }
         }
 
+        public string Mute
+        {
+            get => this.mute;
+            set
+            {
+                this.mute = value;
+                OnPropertyChanged();
+            }
+        }
+
         public ObservableCollection<Sound> Sounds
         {
             get;
@@ -94,38 +105,24 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         public ICommand Stop { get; private set; }
         public ICommand PlayNext { get; private set; }
         public ICommand PlayPrevious { get; private set; }
+        public ICommand VolumeUp { get; private set; }
+        public ICommand VolumeDown { get; private set; }
+        public ICommand VolumeMute { get; private set; }
 
         #endregion
 
+        #region Constructor
+
         public AudioPlayerViewModel()
         {
-            this.soundEngine = new SoundEngine();
-            this.soundEngine.StateChanged += OnStateChanged;
-            this.soundEngine.SoundError += OnSoundError;
-            this.filePlaylistManager = new FilePlaylistManager();
-
+            InitializeDependencies();
+            InitializePlaylist();
             RegisterCommands();
-
-            Sounds = new ObservableCollection<Sound>();
-            Playlists = new ObservableCollection<Sound>();
-
-            this.timer = new DispatcherTimer();
-            this.timer.Interval = TimeSpan.FromSeconds(0.1);
-            this.timer.Tick += OnTick;
-            this.timer.Start();
-
-            this.filePlaylistManager.FillSoundsFromDirectory(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments));
         }
 
-        private void RegisterCommands()
-        {
-            Play = new RelayCommand(ExecutePlay, CanExecutePlay);
-            Pause = new RelayCommand(ExecutePause, CanExecutePause);
-            Stop = new RelayCommand(ExecuteStop, CanExecuteStop);
-            Open = new RelayCommand(ExecuteOpen, CanExecuteOpen);
-            PlayPrevious = new RelayCommand(ExecutePlayPrevious, CanExecutePlayPrevious);
-            PlayNext = new RelayCommand(ExecutePlayNext, CanExecutePlayNext);
-        }
+        #endregion
+
+        #region Event handlers methods
 
         private void OnSoundError(object sender, SoundEngineErrorArgs e)
         {
@@ -137,6 +134,19 @@ namespace BatykAudioPlayer.APP.AudioPlayer
             this.currentSoundState = e.NewState;
             UpdateTime();
         }
+
+        private void OnFilePlaylistManagerError(object sender, FilePlaylistManagerErrorArgs e)
+        {
+            MessageBox.Show(e.ErrorDetails, "FilePlaylistManager error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
+        private void OnStateChanged (object sender, FilePlaylistManagerEventArgs e)
+        {
+            RefreshSounds(e.NewSounds);
+            UpdateTime();
+        }
+
+        #endregion
 
         #region ICommand implementation
 
@@ -216,8 +226,8 @@ namespace BatykAudioPlayer.APP.AudioPlayer
             var dialog = new FolderBrowserDialog();
             dialog.ShowDialog();
             var dirPath = dialog.SelectedPath;
-            var sounds = this.filePlaylistManager.FillSoundsFromDirectory(dirPath);
-            RefreshPlaylist(sounds);
+            filePlaylistManager.FillSoundsFromDirectory(dirPath);
+            filePlaylistManager.SetDefaultDirectory(dirPath);
         }
 
         /// <summary>
@@ -273,9 +283,95 @@ namespace BatykAudioPlayer.APP.AudioPlayer
             SelectedSound = Sounds[++index];
             this.soundEngine.Play(SelectedSound.Path);
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        private bool CanExecuteVolumeUp(object obj)
+        {
+            if (this.soundEngine.Volume < 1)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="obj"></param>
+        private void ExecuteVolumeUp(object obj)
+        {
+            this.soundEngine.Volume += 0.1;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        private bool CanExecuteVolumeDown(object obj)
+        {
+            if (this.soundEngine.Volume > 0)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="obj"></param>
+        private void ExecuteVolumeDown(object obj)
+        {
+            soundEngine.Volume -= 0.1;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        private bool CanExecuteVolumeMute(object obj)
+        {
+            return true;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="obj"></param>
+        private void ExecuteVolumeMute(object obj)
+        {
+            this.soundEngine.VolumeMute();
+            if (Mute.Equals("Mute"))
+            {
+                Mute = "Unmute";
+            }
+            else if (Mute.Equals("Unmute"))
+            {
+                Mute = "Mute";
+            }
+        }
         #endregion
 
         #region Pivate helper methods
+
+        private void RegisterCommands()
+        {
+            Play = new RelayCommand(ExecutePlay, CanExecutePlay);
+            Pause = new RelayCommand(ExecutePause, CanExecutePause);
+            Stop = new RelayCommand(ExecuteStop, CanExecuteStop);
+            Open = new RelayCommand(ExecuteOpen, CanExecuteOpen);
+            PlayPrevious = new RelayCommand(ExecutePlayPrevious, CanExecutePlayPrevious);
+            PlayNext = new RelayCommand(ExecutePlayNext, CanExecutePlayNext);
+            VolumeUp = new RelayCommand(ExecuteVolumeUp, CanExecuteVolumeUp);
+            VolumeDown = new RelayCommand(ExecuteVolumeDown, CanExecuteVolumeDown);
+            VolumeMute = new RelayCommand(ExecuteVolumeMute, CanExecuteVolumeMute);
+        }
 
         private void OnTick(object sender, EventArgs s)
         {
@@ -285,7 +381,7 @@ namespace BatykAudioPlayer.APP.AudioPlayer
 
         private void UpdateTime()
         {
-            var time = this.soundEngine.GetTimePosition();
+            var time = soundEngine.GetTimePosition();
             if (time == null)
             {
                 TimeInfo = "--/--";
@@ -301,10 +397,42 @@ namespace BatykAudioPlayer.APP.AudioPlayer
             Progress = this.soundEngine.GetFilePosition();
         }
 
-        private void RefreshPlaylist(List<Sound> sounds)
+        private void RefreshSounds(List<Sound> sounds)
         {
             Sounds.Clear();
             sounds.ForEach(s => Sounds.Add(s));
+        }
+
+        private void InitializePlaylist()
+        {
+            if (filePlaylistManager.CheckIfDefaultDirectoryIsSet())
+            {
+                filePlaylistManager.FillSoundsFromDefaultDirectory();
+            }
+            else
+            {
+                filePlaylistManager.SetDefaultDirectory(Environment.GetFolderPath(Environment.SpecialFolder.MyMusic));
+                filePlaylistManager.FillSoundsFromDefaultDirectory();               
+            }
+        }
+
+        private void InitializeDependencies()
+        {
+            this.soundEngine = new SoundEngine();
+            this.soundEngine.StateChanged += OnStateChanged;
+            this.soundEngine.SoundError += OnSoundError;
+
+            this.filePlaylistManager = new FilePlaylistManager();
+            this.filePlaylistManager.StateChanged += OnStateChanged;
+            this.filePlaylistManager.FilePlaylistError += OnFilePlaylistManagerError;
+
+            Sounds = new ObservableCollection<Sound>();
+            Playlists = new ObservableCollection<Sound>();
+
+            this.timer = new DispatcherTimer();
+            this.timer.Interval = TimeSpan.FromSeconds(0.1);
+            this.timer.Tick += OnTick;
+            this.timer.Start();
         }
 
         #endregion
