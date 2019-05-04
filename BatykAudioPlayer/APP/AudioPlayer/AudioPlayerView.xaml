@@ -68,6 +68,22 @@
                 Command="{Binding VolumeMute}"
                 Content="{Binding Mute}"
                 Style="{StaticResource ButtonStyle}" />
+            <Button 
+                Command="{Binding RepeatShuffle}"
+                Content="Shuffle"
+                Style="{StaticResource ButtonStyle}" />
+            <Button 
+                Command="{Binding RepeatSound}"
+                Content="Repeat"
+                Style="{StaticResource ButtonStyle}" />
+            <Button 
+                Command="{Binding RepeatPlaylist}"
+                Content="Repeat playlist"
+                Style="{StaticResource ButtonStyle}" />
+            <Button 
+                Command="{Binding RepeatNormal}"
+                Content="Normal"
+                Style="{StaticResource ButtonStyle}" />
         </StackPanel>
 
         <ProgressBar
