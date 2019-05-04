@@ -24,12 +24,18 @@ namespace BatykAudioPlayer.BL.SoundEngine
         /// <summary>
         /// 
         /// </summary>
+        public string Time { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="Name">Name of sound.</param>
         /// <param name="Path">URI path to sound file.</param>
-        public Sound(string Name, string Path)
+        public Sound(string Name, string Path, string Time)
         {
             this.Name = Name;
             this.Path = Path;
+            this.Time = Time;
         }
     }
 }
