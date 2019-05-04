@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BatykAudioPlayer.BL.SoundEngine;
 using System.Configuration;
+using NAudio.Wave;
 
 namespace BatykAudioPlayer.BL.FilePlaylistManager
 {
@@ -63,7 +64,7 @@ namespace BatykAudioPlayer.BL.FilePlaylistManager
                 var pathExtension = Path.GetExtension(file);
                 if (pathExtension?.ToUpper() == ".TXT")
                 {
-                    playlists.Add(new Sound(Path.GetFileNameWithoutExtension(file), file));
+                    //playlists.Add(new Sound(Path.GetFileNameWithoutExtension(file), file));
                 }
             }
             return playlists;
@@ -80,13 +81,16 @@ namespace BatykAudioPlayer.BL.FilePlaylistManager
                     var pathExtension = Path.GetExtension(file);
                     if (pathExtension?.ToUpper() == ".MP3")
                     {
-                        soundList.Add(new Sound(Path.GetFileNameWithoutExtension(file), file));
+                        Mp3FileReader reader = new Mp3FileReader(file);
+                        TimeSpan duration = reader.TotalTime;
+                        soundList.Add(new Sound(Path.GetFileNameWithoutExtension(file), file, duration.ToString(@"hh\:mm\:ss")));
                     }
                 }
                 OnStateChanged(soundList);
             }
             else
             {
+                
                 OnStateChanged(null);
             }
         }
@@ -102,7 +106,9 @@ namespace BatykAudioPlayer.BL.FilePlaylistManager
                     var pathExtension = Path.GetExtension(file);
                     if (pathExtension?.ToUpper() == ".MP3")
                     {
-                        soundList.Add(new Sound(Path.GetFileNameWithoutExtension(file), file));
+                        Mp3FileReader reader = new Mp3FileReader(file);
+                        TimeSpan duration = reader.TotalTime;
+                        soundList.Add(new Sound(Path.GetFileNameWithoutExtension(file), file, duration.ToString(@"hh\:mm\:ss")));
                     }
                 }
                 OnStateChanged(soundList);
