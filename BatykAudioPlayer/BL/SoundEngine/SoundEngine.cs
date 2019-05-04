@@ -90,20 +90,32 @@ namespace BatykAudioPlayer.BL.SoundEngine
                 OnError(ex.Message);
             }
         }
+        public void VolumeUp()
+        {
+            if (this.mediaPlayer.Volume < 1)
+            {
+                this.mediaPlayer.Volume += 0.1;
+            }
+        }
 
         public void VolumeDown()
         {
-            throw new NotImplementedException();
+            if (this.mediaPlayer.Volume > 0)
+            {
+                this.mediaPlayer.Volume -= 0.1;
+            }
         }
 
         public void VolumeMute()
         {
-            throw new NotImplementedException();
-        }
-
-        public void VolumeUp()
-        {
-            throw new NotImplementedException();
+            if (this.mediaPlayer.IsMuted)
+            {
+                this.mediaPlayer.IsMuted = false;
+            }
+            else
+            {
+                this.mediaPlayer.IsMuted = true;
+            }
         }
 
         public Tuple<TimeSpan, TimeSpan> GetTimePosition()

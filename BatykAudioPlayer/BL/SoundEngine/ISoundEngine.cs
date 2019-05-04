@@ -11,15 +11,57 @@ namespace BatykAudioPlayer.BL.SoundEngine
     /// </summary>
     interface ISoundEngine
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="path"></param>
         void Play(string path);
+
+        /// <summary>
+        /// 
+        /// </summary>
         void Stop();
+
+        /// <summary>
+        /// 
+        /// </summary>
         void Pause();
+
+        /// <summary>
+        /// 
+        /// </summary>
         void VolumeUp();
+
+        /// <summary>
+        /// 
+        /// </summary>
         void VolumeDown();
+
+        /// <summary>
+        /// 
+        /// </summary>
         void VolumeMute();
-        event EventHandler<SoundEngineEventArgs> StateChanged;
-        event EventHandler<SoundEngineErrorArgs> SoundError;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns><see cref="Tuple"/> of <see cref="TimeSpan"/> containing T1 actual time and T2 total time of sound.</returns>
         Tuple<TimeSpan, TimeSpan> GetTimePosition();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns>Double value between 0-100 representing % of actual time in sound.</returns>
         double GetFilePosition();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        event EventHandler<SoundEngineEventArgs> StateChanged;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        event EventHandler<SoundEngineErrorArgs> SoundError;
     }
 }
