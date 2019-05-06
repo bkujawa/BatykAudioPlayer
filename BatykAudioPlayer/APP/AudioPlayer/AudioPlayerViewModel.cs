@@ -136,7 +136,7 @@ namespace BatykAudioPlayer.APP.AudioPlayer
             MessageBox.Show(e.ErrorDetails, "Sound error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
-        private void OnStateChanged(object sender, SoundEngineEventArgs e)
+        private void OnSoundStateChanged(object sender, SoundEngineEventArgs e)
         {
             this.currentSoundState = e.NewState;
             UpdateTime();
@@ -147,7 +147,7 @@ namespace BatykAudioPlayer.APP.AudioPlayer
             MessageBox.Show(e.ErrorDetails, "FilePlaylistManager error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
-        private void OnStateChanged (object sender, FilePlaylistManagerEventArgs e)
+        private void OnFilePlaylistStateChanged (object sender, FilePlaylistManagerEventArgs e)
         {
             RefreshSounds(e.NewSounds);
             UpdateTime();
@@ -402,8 +402,8 @@ namespace BatykAudioPlayer.APP.AudioPlayer
 
         private void ExecuteRepeatShuffle(object obj)
         {
+            SetMediaEndedEvent(NextSoundRepeatShuffled);
             this.currentAudioPlayerState = AudioPlayerState.Shuffled;
-            this.soundEngine.SetMediaEndedEvent(NextSoundRepeatShuffled);
         }
 
         private bool CanExecuteRepeatSound(object obj)
@@ -417,8 +417,8 @@ namespace BatykAudioPlayer.APP.AudioPlayer
 
         private void ExecuteRepeatSound(object obj)
         {
+            SetMediaEndedEvent(NextSoundRepeatSound);
             this.currentAudioPlayerState = AudioPlayerState.RepeatSound;
-            this.soundEngine.SetMediaEndedEvent(NextSoundRepeatSound);
         }
 
         private bool CanExecuteRepeatPlaylist(object obj)
@@ -432,8 +432,8 @@ namespace BatykAudioPlayer.APP.AudioPlayer
 
         private void ExecuteRepeatPlaylist(object obj)
         {
+            SetMediaEndedEvent(NextSoundRepeatPlaylist);
             this.currentAudioPlayerState = AudioPlayerState.RepeatPlaylist;
-            this.soundEngine.SetMediaEndedEvent(NextSoundRepeatPlaylist);
         }
 
         private bool CanExecuteRepeatNormal(object obj)
@@ -447,8 +447,8 @@ namespace BatykAudioPlayer.APP.AudioPlayer
 
         private void ExecuteRepeatNormal(object obj)
         {
+            SetMediaEndedEvent(NextSoundRepeatNormal);
             this.currentAudioPlayerState = AudioPlayerState.Normal;
-            this.soundEngine.SetMediaEndedEvent(NextSoundRepeatNormal);
         }
 
         #endregion
@@ -518,12 +518,13 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         private void InitializeDependencies()
         {
             this.soundEngine = new SoundEngine();
-            this.soundEngine.StateChanged += OnStateChanged;
+            this.soundEngine.StateChanged += OnSoundStateChanged;
             this.soundEngine.SoundError += OnSoundError;
-            this.soundEngine.SetMediaEndedEvent(NextSoundRepeatNormal);
+            this.soundEngine.MediaEnded += NextSoundRepeatNormal;
+            this.currentAudioPlayerState = AudioPlayerState.Normal;
 
             this.filePlaylistManager = new FilePlaylistManager();
-            this.filePlaylistManager.StateChanged += OnStateChanged;
+            this.filePlaylistManager.StateChanged += OnFilePlaylistStateChanged;
             this.filePlaylistManager.FilePlaylistError += OnFilePlaylistManagerError;
 
             Sounds = new ObservableCollection<Sound>();
@@ -584,6 +585,27 @@ namespace BatykAudioPlayer.APP.AudioPlayer
                 this.soundEngine.Play(this.currentSound.Path);
             }
             SelectedSound = this.currentSound;
+        }
+
+        private void SetMediaEndedEvent(EventHandler eventHandler)
+        {
+            if (this.currentAudioPlayerState == AudioPlayerState.Normal)
+            {
+                this.soundEngine.MediaEnded -= NextSoundRepeatNormal;
+            }
+            else if (this.currentAudioPlayerState == AudioPlayerState.RepeatPlaylist)
+            {
+                this.soundEngine.MediaEnded -= NextSoundRepeatPlaylist;
+            }
+            else if (this.currentAudioPlayerState == AudioPlayerState.RepeatSound)
+            {
+                this.soundEngine.MediaEnded -= NextSoundRepeatSound;
+            }
+            else if (this.currentAudioPlayerState == AudioPlayerState.Shuffled)
+            {
+                this.soundEngine.MediaEnded -= NextSoundRepeatShuffled;
+            }
+            this.soundEngine.MediaEnded += eventHandler;          
         }
 
         #endregion

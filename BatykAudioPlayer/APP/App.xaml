@@ -16,8 +16,14 @@
                 <Setter.Value>
                     <DataTemplate DataType="{x:Type ListBox}">
                         <Grid Background="Transparent" ToolTip="{Binding Path}">
-                            <TextBlock FontSize="20" Text="{Binding Name}" HorizontalAlignment="Left"/>
-                            <TextBlock FontSize="20" Text="{Binding Time}" HorizontalAlignment="Right"/>
+                            <TextBlock
+                                HorizontalAlignment="Left"
+                                FontSize="20"
+                                Text="{Binding Name}" />
+                            <TextBlock
+                                HorizontalAlignment="Right"
+                                FontSize="20"
+                                Text="{Binding Time}" />
                         </Grid>
                     </DataTemplate>
                 </Setter.Value>

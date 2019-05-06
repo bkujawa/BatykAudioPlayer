@@ -56,31 +56,31 @@
                 Command="{Binding PlayNext}"
                 Content="Next"
                 Style="{StaticResource ButtonStyle}" />
-            <Button 
+            <Button
                 Command="{Binding VolumeUp}"
                 Content="Volume +"
                 Style="{StaticResource ButtonStyle}" />
-            <Button 
+            <Button
                 Command="{Binding VolumeDown}"
                 Content="Volume -"
                 Style="{StaticResource ButtonStyle}" />
-            <Button 
+            <Button
                 Command="{Binding VolumeMute}"
                 Content="{Binding Mute}"
                 Style="{StaticResource ButtonStyle}" />
-            <Button 
+            <Button
                 Command="{Binding RepeatShuffle}"
                 Content="Shuffle"
                 Style="{StaticResource ButtonStyle}" />
-            <Button 
+            <Button
                 Command="{Binding RepeatSound}"
                 Content="Repeat"
                 Style="{StaticResource ButtonStyle}" />
-            <Button 
+            <Button
                 Command="{Binding RepeatPlaylist}"
                 Content="Repeat playlist"
                 Style="{StaticResource ButtonStyle}" />
-            <Button 
+            <Button
                 Command="{Binding RepeatNormal}"
                 Content="Normal"
                 Style="{StaticResource ButtonStyle}" />
@@ -106,12 +106,12 @@
             SelectedItem="{Binding SelectedSound}"
             Style="{StaticResource SoundListStyle}" />
 
-        <GridSplitter 
+        <GridSplitter
             Grid.Row="5"
             Grid.Column="1"
-            VerticalAlignment="Stretch"
+            Width="4"
             HorizontalAlignment="Center"
-            ShowsPreview="False"
-            Width="4" />
+            VerticalAlignment="Stretch"
+            ShowsPreview="False" />
     </Grid>
 </Window>
