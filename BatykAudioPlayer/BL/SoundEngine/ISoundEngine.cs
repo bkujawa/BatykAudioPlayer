@@ -48,7 +48,7 @@ namespace BatykAudioPlayer.BL.SoundEngine
         /// 
         /// </summary>
         /// <param name="eventHandler"></param>
-        void SetMediaEndedEvent(EventHandler eventHandler);
+        event EventHandler MediaEnded;
 
         /// <summary>
         /// 
