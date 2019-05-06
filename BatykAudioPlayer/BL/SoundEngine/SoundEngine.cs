@@ -15,7 +15,7 @@ namespace BatykAudioPlayer.BL.SoundEngine
 
         private readonly MediaPlayer mediaPlayer;
         private SoundState? currentState;
-        private AudioPlayerState currentAudioPlayerState;
+        //private AudioPlayerState currentAudioPlayerState;
         private string currentPath;
         private double volume;
 
@@ -41,13 +41,31 @@ namespace BatykAudioPlayer.BL.SoundEngine
             }
         }
 
+        public event EventHandler MediaEnded
+        {
+            add
+            {
+                if (this.mediaEnded != null)
+                {
+                    this.mediaPlayer.MediaEnded -= this.mediaEnded;
+                }
+                this.mediaEnded += value;
+                this.mediaPlayer.MediaEnded += this.mediaEnded;
+            }
+            remove
+            {
+                this.mediaPlayer.MediaEnded -= this.mediaEnded;
+                this.mediaEnded -= value;
+            }
+        }
+
         #endregion
 
         #region Event handlers
 
         public event EventHandler<SoundEngineEventArgs> StateChanged;
         public event EventHandler<SoundEngineErrorArgs> SoundError;
-        private event EventHandler MediaEnded;
+        private event EventHandler mediaEnded;
 
         #endregion
 
@@ -169,16 +187,6 @@ namespace BatykAudioPlayer.BL.SoundEngine
                 return Math.Min(100, 100 * this.mediaPlayer.Position.TotalSeconds / this.mediaPlayer.NaturalDuration.TimeSpan.TotalSeconds);
             }
             return 0;
-        }
-
-        public void SetMediaEndedEvent(EventHandler eventHandler)
-        {
-            if (MediaEnded != null)
-            {
-                this.mediaPlayer.MediaEnded -= MediaEnded;
-            }
-            MediaEnded = eventHandler;
-            this.mediaPlayer.MediaEnded += MediaEnded;
         }
 
         #endregion
