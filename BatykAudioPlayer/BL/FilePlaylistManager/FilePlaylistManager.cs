@@ -34,7 +34,7 @@ namespace BatykAudioPlayer.BL.FilePlaylistManager
 
         public FilePlaylistManager()
         {
-            defaultDirectory = CheckDefaultDirectory();
+            defaultDirectory = ReturnDefaultDirectoryFromConfig();
         }
         #endregion
 
@@ -89,8 +89,7 @@ namespace BatykAudioPlayer.BL.FilePlaylistManager
                 OnStateChanged(soundList);
             }
             else
-            {
-                
+            {               
                 OnStateChanged(null);
             }
         }
@@ -170,7 +169,7 @@ namespace BatykAudioPlayer.BL.FilePlaylistManager
 
         #region Private helpers
 
-        private string CheckDefaultDirectory()
+        private string ReturnDefaultDirectoryFromConfig()
         {
             var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
             var directory = config.AppSettings.Settings["DirPath"]?.Value;
