@@ -186,9 +186,11 @@ namespace BatykAudioPlayer.BL.FilePlaylistManager
     public class FilePlaylistManagerEventArgs : EventArgs
     {
         public List<Sound> NewSounds { get; private set; }
-        public FilePlaylistManagerEventArgs(List<Sound> NewSounds)
+        public CollectionRefreshed Refreshed { get; private set; }
+        public FilePlaylistManagerEventArgs(List<Sound> NewSounds, CollectionRefreshed Refreshed = CollectionRefreshed.Sounds)
         {
             this.NewSounds = NewSounds;
+            this.Refreshed = Refreshed;
         }
     }
 
@@ -199,5 +201,11 @@ namespace BatykAudioPlayer.BL.FilePlaylistManager
         {
             this.ErrorDetails = ErrorDetails;
         }
+    }
+
+    public enum CollectionRefreshed
+    {
+        Sounds,
+        Playlists
     }
 }
