@@ -149,7 +149,10 @@ namespace BatykAudioPlayer.APP.AudioPlayer
 
         private void OnFilePlaylistStateChanged (object sender, FilePlaylistManagerEventArgs e)
         {
-            RefreshSounds(e.NewSounds);
+            //TODO: Change implementation in FilePlaylistManager to refer to ObservableCollection<Sound>
+            //instead of List<Sound>, so RefreshSounds method could be more generic.
+            //FilePlaylistManagerEventArgs should also contain information about which collection changed.
+            RefreshSounds(e.NewSounds, e.Refreshed);
             UpdateTime();
         }
 
@@ -496,10 +499,18 @@ namespace BatykAudioPlayer.APP.AudioPlayer
             Progress = this.soundEngine.GetFilePosition();
         }
 
-        private void RefreshSounds(List<Sound> sounds)
+        private void RefreshSounds(List<Sound> sounds, CollectionRefreshed Refreshed)
         {
-            Sounds.Clear();
-            sounds.ForEach(s => Sounds.Add(s));
+            if (Refreshed == CollectionRefreshed.Sounds)
+            {
+                Sounds.Clear();
+                sounds.ForEach(s => Sounds.Add(s));
+            }
+            else
+            {
+                Playlists.Clear();
+                sounds.ForEach(p => Playlists.Add(p));
+            }
         }
 
         private void InitializePlaylist()
