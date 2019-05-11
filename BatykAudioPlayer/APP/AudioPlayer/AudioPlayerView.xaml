@@ -1,14 +1,14 @@
-﻿<Window
-    x:Class="BatykAudioPlayer.APP.AudioPlayer.AudioPlayerView"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="clr-namespace:BatykAudioPlayer.APP.AudioPlayer"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Title="BatykAudioPlayer"
-    MinWidth="800"
-    MinHeight="450"
-    mc:Ignorable="d">
+﻿<Window x:Class="BatykAudioPlayer.APP.AudioPlayer.AudioPlayerView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:BatykAudioPlayer.APP.AudioPlayer"
+        mc:Ignorable="d"
+        Title="BatykAudioPlayer"
+        MinHeight="450"
+        MinWidth="800"
+        >
     <Grid Margin="0" ShowGridLines="True">
         <Grid.RowDefinitions>
             <RowDefinition Height="20" />
@@ -24,94 +24,130 @@
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition MinWidth="200" />
         </Grid.ColumnDefinitions>
-        <Button
-            HorizontalAlignment="Left"
-            Command="{Binding Open}"
-            Content="OpenDirectory"
-            Style="{StaticResource MenuButtonStyle}" />
+        <Button HorizontalAlignment="Left"
+                Command="{Binding Open}"
+                Content="OpenDirectory"
+                Style="{StaticResource MenuButtonStyle}"
+                />
 
-        <StackPanel
-            Grid.Row="2"
-            Grid.Column="0"
-            Grid.ColumnSpan="3"
-            VerticalAlignment="Top"
-            Orientation="Horizontal">
-            <Button
-                Command="{Binding Play}"
-                Content="Play"
-                Style="{StaticResource ButtonStyle}" />
-            <Button
-                Command="{Binding Pause}"
-                Content="Pause"
-                Style="{StaticResource ButtonStyle}" />
-            <Button
-                Command="{Binding Stop}"
-                Content="Stop"
-                Style="{StaticResource ButtonStyle}" />
-            <Button
-                Command="{Binding PlayPrevious}"
-                Content="Previous"
-                Style="{StaticResource ButtonStyle}" />
-            <Button
-                Command="{Binding PlayNext}"
-                Content="Next"
-                Style="{StaticResource ButtonStyle}" />
-            <Button
-                Command="{Binding VolumeUp}"
-                Content="Volume +"
-                Style="{StaticResource ButtonStyle}" />
-            <Button
-                Command="{Binding VolumeDown}"
-                Content="Volume -"
-                Style="{StaticResource ButtonStyle}" />
-            <Button
-                Command="{Binding VolumeMute}"
-                Content="{Binding Mute}"
-                Style="{StaticResource ButtonStyle}" />
-            <Button
-                Command="{Binding RepeatShuffle}"
-                Content="Shuffle"
-                Style="{StaticResource ButtonStyle}" />
-            <Button
-                Command="{Binding RepeatSound}"
-                Content="Repeat"
-                Style="{StaticResource ButtonStyle}" />
-            <Button
-                Command="{Binding RepeatPlaylist}"
-                Content="Repeat playlist"
-                Style="{StaticResource ButtonStyle}" />
-            <Button
-                Command="{Binding RepeatNormal}"
-                Content="Normal"
-                Style="{StaticResource ButtonStyle}" />
+        <StackPanel Grid.Column="0"
+                    Grid.ColumnSpan="3"
+                    Grid.Row="2"
+                    VerticalAlignment="Top"
+                    Orientation="Horizontal"
+                    >
+            <Button Command="{Binding Play}"
+                    Content="Play"
+                    Style="{StaticResource ButtonStyle}"
+                    />
+            <Button Command="{Binding Pause}"
+                    Content="Pause"
+                    Style="{StaticResource ButtonStyle}"
+                    />
+            <Button Command="{Binding Stop}"
+                    Content="Stop"
+                    Style="{StaticResource ButtonStyle}"
+                    />
+            <Button Command="{Binding PlayPrevious}"
+                    Content="Previous"
+                    Style="{StaticResource ButtonStyle}"
+                    />
+            <Button Command="{Binding PlayNext}"
+                    Content="Next"
+                    Style="{StaticResource ButtonStyle}"
+                    />
+            <Button Command="{Binding VolumeUp}"
+                    Content="Volume +"
+                    Style="{StaticResource ButtonStyle}"
+                    />
+            <Button Command="{Binding VolumeDown}"
+                    Content="Volume -"
+                    Style="{StaticResource ButtonStyle}"
+                    />
+            <Button Command="{Binding VolumeMute}"
+                    Content="{Binding Mute}"
+                    Style="{StaticResource ButtonStyle}"
+                    />
+            <Button Command="{Binding RepeatShuffle}"
+                    Content="Shuffle"
+                    Style="{StaticResource ButtonStyle}"
+                    />
+            <Button Command="{Binding RepeatSound}"
+                    Content="Repeat"
+                    Style="{StaticResource ButtonStyle}"
+                    />
+            <Button Command="{Binding RepeatPlaylist}"
+                    Content="Repeat playlist"
+                    Style="{StaticResource ButtonStyle}"
+                    />
+            <Button Command="{Binding RepeatNormal}"
+                    Content="Normal"
+                    Style="{StaticResource ButtonStyle}"
+                    />
         </StackPanel>
 
-        <ProgressBar
-            Grid.Row="4"
-            Grid.ColumnSpan="3"
-            Height="20"
-            Maximum="100"
-            Value="{Binding Progress}" />
+        <ProgressBar Grid.ColumnSpan="3"
+                     Grid.Row="4"
+                     Height="20"
+                     Maximum="100"
+                     Value="{Binding Progress}"
+                     />
 
-        <TextBlock
-            Grid.Row="4"
-            Grid.ColumnSpan="3"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"
-            Text="{Binding TimeInfo}" />
+        <TextBlock Grid.ColumnSpan="3"
+                   Grid.Row="4"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center"
+                   Text="{Binding TimeInfo}"
+                   />
 
-        <ListBox
-            Grid.Row="5"
-            ItemsSource="{Binding Sounds}"
-            SelectedItem="{Binding SelectedSound}"
-            Style="{StaticResource SoundListStyle}" />
+        <ListBox Grid.Row="5"
+                 ItemsSource="{Binding Sounds}"
+                 SelectedItem="{Binding SelectedSound}"
+                 Style="{StaticResource SoundListStyle}"
+                 />
 
-        <GridSplitter
-            Grid.Row="5"
-            Grid.Column="1"
-            Width="4"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Stretch"
-            ShowsPreview="False" />
+        <GridSplitter Grid.Column="1"
+                      Grid.Row="5"
+                      Width="4"
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Stretch"
+                      ShowsPreview="False"
+                      />
+
+        <TextBlock Grid.Row="6"
+                   HorizontalAlignment="Left"
+                   Text="{Binding CurrentSound}"
+                   />
+
+        <StackPanel Grid.ColumnSpan="3"
+                    Grid.Row="6"
+                    HorizontalAlignment="Right"
+                    Orientation="Horizontal"
+                    >
+            <TextBlock FontSize="20"
+                       FontWeight="Bold"
+                       Text="Playlists"
+                       />
+            <Button Command="{Binding SavePlaylist}"
+                    Content="Save"
+                    Style="{StaticResource ButtonStyle}"
+                    />
+            <TextBox MinWidth="80" Text="{Binding SavedPlaylistName}" />
+            <Button Command="{Binding OpenPlaylist}"
+                    Content="Open"
+                    Style="{StaticResource ButtonStyle}"
+                    />
+            <Button Command="{Binding DeletePlaylist}"
+                    Content="Delete"
+                    Style="{StaticResource ButtonStyle}"
+                    />
+        </StackPanel>
+
+        <ListBox Grid.Column="2"
+                 Grid.Row="5"
+                 ItemsSource="{Binding Playlists}"
+                 SelectedItem="{Binding SelectedPlaylist}"
+                 Style="{StaticResource SoundListStyle}"
+                 />
     </Grid>
 </Window>
