@@ -1,9 +1,9 @@
-﻿<Application
-    x:Class="BatykAudioPlayer.App"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="clr-namespace:BatykAudioPlayer.APP"
-    StartupUri="AudioPlayer/AudioPlayerView.xaml">
+﻿<Application x:Class="BatykAudioPlayer.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:BatykAudioPlayer.APP"
+             StartupUri="AudioPlayer/AudioPlayerView.xaml"
+             >
     <Application.Resources>
         <Style x:Key="ButtonStyle" TargetType="{x:Type Button}">
             <Setter Property="Height" Value="30" />
@@ -16,14 +16,10 @@
                 <Setter.Value>
                     <DataTemplate DataType="{x:Type ListBox}">
                         <Grid Background="Transparent" ToolTip="{Binding Path}">
-                            <TextBlock
-                                HorizontalAlignment="Left"
-                                FontSize="20"
-                                Text="{Binding Name}" />
-                            <TextBlock
-                                HorizontalAlignment="Right"
-                                FontSize="20"
-                                Text="{Binding Time}" />
+                            <TextBlock HorizontalAlignment="Left"
+                                       FontSize="20"
+                                       Text="{Binding Name}"
+                                       />
                         </Grid>
                     </DataTemplate>
                 </Setter.Value>
