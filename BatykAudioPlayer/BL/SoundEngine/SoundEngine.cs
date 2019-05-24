@@ -10,7 +10,6 @@ namespace BatykAudioPlayer.BL.SoundEngine
 {
     public class SoundEngine : ISoundEngine
     {
-
         #region Private fields
 
         private readonly MediaPlayer mediaPlayer;
@@ -48,6 +47,7 @@ namespace BatykAudioPlayer.BL.SoundEngine
                 if (this.mediaEnded != null)
                 {
                     this.mediaPlayer.MediaEnded -= this.mediaEnded;
+                    this.mediaEnded -= this.mediaEnded;
                 }
                 this.mediaEnded += value;
                 this.mediaPlayer.MediaEnded += this.mediaEnded;
@@ -79,7 +79,7 @@ namespace BatykAudioPlayer.BL.SoundEngine
 
         #endregion
 
-        #region Event handlers methods
+        #region Event handlers
 
         private void OnStateChanged(SoundState newState)
         {
@@ -190,11 +190,6 @@ namespace BatykAudioPlayer.BL.SoundEngine
         }
 
         #endregion
-
-        #region Private helpers
-
-        #endregion
-
     }
 
     public class SoundEngineEventArgs : EventArgs
