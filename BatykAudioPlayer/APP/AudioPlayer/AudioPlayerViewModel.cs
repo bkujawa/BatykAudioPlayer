@@ -115,6 +115,8 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         public ICommand RepeatSound { get; private set; }
         public ICommand RepeatPlaylist { get; private set; }
         public ICommand RepeatNormal { get; private set; }
+        public ICommand SavePlaylist { get; private set; }
+        public ICommand OpenPlaylist { get; private set; }
 
         #endregion
 
@@ -149,9 +151,6 @@ namespace BatykAudioPlayer.APP.AudioPlayer
 
         private void OnFilePlaylistStateChanged (object sender, FilePlaylistManagerEventArgs e)
         {
-            //TODO: Change implementation in FilePlaylistManager to refer to ObservableCollection<Sound>
-            //instead of List<Sound>, so RefreshSounds method could be more generic.
-            //FilePlaylistManagerEventArgs should also contain information about which collection changed.
             RefreshSounds(e.NewSounds, e.Refreshed);
             UpdateTime();
         }
@@ -454,6 +453,46 @@ namespace BatykAudioPlayer.APP.AudioPlayer
             this.currentAudioPlayerState = AudioPlayerState.Normal;
         }
 
+        private bool CanSavePlaylist(object obj)
+        {
+            return true;
+        }
+
+        private void ExecuteSavePlaylist(object obj)
+        {
+            string playlistName = "temp.txt";
+            string docPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "AudioPlayer");
+            Directory.CreateDirectory(docPath);
+            using (StreamWriter sr = new StreamWriter(Path.Combine(docPath, playlistName)))
+            {
+                foreach (var sound in Sounds)
+                {
+                    sr.WriteLine(sound.Name);
+                    sr.WriteLine(sound.Path);
+                    sr.WriteLine(sound.Time);
+                }
+            }
+        }
+
+        private bool CanOpenPlaylist(object obj)
+        {
+            return SelectedPlaylist != null;
+        }
+
+        private void ExecuteOpenPlaylist(object obj)
+        {
+            if (!string.IsNullOrEmpty(SelectedPlaylist.Path))
+            {
+                var soundList = new List<Sound>();
+                var allFiles = File.ReadAllLines(SelectedPlaylist.Path);
+                for (int i = 0; i < allFiles.Length - 1; i = i + 2)
+                {
+                    soundList.Add(new Sound(allFiles[i], allFiles[i + 1], allFiles[i + 2]));
+                }
+                RefreshSounds(soundList);
+            }
+        }
+
         #endregion
 
         #region Pivate helper methods
@@ -473,6 +512,8 @@ namespace BatykAudioPlayer.APP.AudioPlayer
             RepeatSound = new RelayCommand(ExecuteRepeatSound, CanExecuteRepeatSound);
             RepeatPlaylist = new RelayCommand(ExecuteRepeatPlaylist, CanExecuteRepeatPlaylist);
             RepeatNormal = new RelayCommand(ExecuteRepeatNormal, CanExecuteRepeatNormal);
+            SavePlaylist = new RelayCommand(ExecuteSavePlaylist, CanSavePlaylist);
+            OpenPlaylist = new RelayCommand(ExecuteOpenPlaylist, CanOpenPlaylist);
         }
 
         private void OnTick(object sender, EventArgs s)
@@ -499,9 +540,13 @@ namespace BatykAudioPlayer.APP.AudioPlayer
             Progress = this.soundEngine.GetFilePosition();
         }
 
-        private void RefreshSounds(List<Sound> sounds, CollectionRefreshed Refreshed)
+        private void RefreshSounds(List<Sound> sounds, CollectionRefreshed refreshed = CollectionRefreshed.Sounds)
         {
-            if (Refreshed == CollectionRefreshed.Sounds)
+            if (sounds == null)
+            {
+                return;
+            }
+            if (refreshed == CollectionRefreshed.Sounds)
             {
                 Sounds.Clear();
                 sounds.ForEach(s => Sounds.Add(s));
@@ -524,6 +569,7 @@ namespace BatykAudioPlayer.APP.AudioPlayer
                 filePlaylistManager.SetDefaultDirectory(Environment.GetFolderPath(Environment.SpecialFolder.MyMusic));
                 filePlaylistManager.FillSoundsFromDefaultDirectory();               
             }
+            filePlaylistManager.FillPlaylistsFromDefaultDirectory();
         }
 
         private void InitializeDependencies()
