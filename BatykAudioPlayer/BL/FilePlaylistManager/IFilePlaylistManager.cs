@@ -24,11 +24,13 @@ namespace BatykAudioPlayer.BL.FilePlaylistManager
         /// 
         /// </summary>
         List<Sound> FillPlaylist();
-        
+
         /// <summary>
-        /// 
+        /// Fills <see cref="BatykAudioPlayer.APP.AudioPlayer.AudioPlayerViewModel.Playlists"/> with files found in default directory.
+        /// <para></para> 
+        /// For now this directory is "C:\'User'\Documents\AudioPlayer"
         /// </summary>
-        void FillPlaylistsFromDefaultDirectory();
+        void FillPlaylistFromDefaultDirectory();
 
         /// <summary>
         /// 
@@ -40,12 +42,18 @@ namespace BatykAudioPlayer.BL.FilePlaylistManager
         /// 
         /// </summary>
         /// <param name="listPath"></param>
-        void SetDefualtPlaylist(string listPath);
+        void SetDefaultPlaylist(string listPath);
 
         /// <summary>
         /// 
         /// </summary>
         bool CheckIfDefaultDirectoryIsSet();
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        bool CheckIfDefaultPlaylistIsSet();
 
         /// <summary>
         /// 
