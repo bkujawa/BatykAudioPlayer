@@ -19,10 +19,6 @@ namespace BatykAudioPlayer.BL.FilePlaylistManager
 
         #endregion
 
-        #region Public properties
-
-        #endregion
-
         #region Event handlers
 
         public event EventHandler<FilePlaylistManagerEventArgs> StateChanged;
@@ -35,6 +31,7 @@ namespace BatykAudioPlayer.BL.FilePlaylistManager
         public FilePlaylistManager()
         {
             defaultDirectory = ReturnDefaultDirectoryFromConfig();
+            defaultPlaylist = ReturnDefaultPlaylistFromConfig();
         }
         #endregion
 
@@ -70,7 +67,7 @@ namespace BatykAudioPlayer.BL.FilePlaylistManager
             return playlists;
         }
 
-        public void FillPlaylistsFromDefaultDirectory()
+        public void FillPlaylistFromDefaultDirectory()
         {
             string docPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "AudioPlayer");
             var playLists = new List<Sound>();
@@ -160,7 +157,7 @@ namespace BatykAudioPlayer.BL.FilePlaylistManager
             }
         }
 
-        public void SetDefualtPlaylist(string dirPath)
+        public void SetDefaultPlaylist(string dirPath)
         {
             if (!string.IsNullOrEmpty(dirPath))
             {
@@ -188,6 +185,15 @@ namespace BatykAudioPlayer.BL.FilePlaylistManager
             return true;
         }
 
+        public bool CheckIfDefaultPlaylistIsSet()
+        {
+            if (string.IsNullOrEmpty(defaultPlaylist))
+            {
+                return false;
+            }
+            return true;
+        }
+
         #endregion
 
         #region Private helpers
@@ -201,6 +207,17 @@ namespace BatykAudioPlayer.BL.FilePlaylistManager
                 return null;
             }
             return directory;
+        }
+
+        private string ReturnDefaultPlaylistFromConfig()
+        {
+            var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            var playlist = config.AppSettings.Settings["PlaylistPath"]?.Value;
+            if (string.IsNullOrEmpty(playlist))
+            {
+                return null;
+            }
+            return playlist;
         }
 
         #endregion
