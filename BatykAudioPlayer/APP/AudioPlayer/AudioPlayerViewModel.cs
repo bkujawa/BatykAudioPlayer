@@ -117,6 +117,7 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         public ICommand RepeatNormal { get; private set; }
         public ICommand SavePlaylist { get; private set; }
         public ICommand OpenPlaylist { get; private set; }
+        public ICommand DeletePlaylist { get; private set; }
 
         #endregion
 
@@ -125,7 +126,7 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         public AudioPlayerViewModel()
         {
             InitializeDependencies();
-            InitializePlaylist();
+            InitializeSoundlistFromDefaultDirectory();
             RegisterCommands();
         }
 
@@ -151,7 +152,14 @@ namespace BatykAudioPlayer.APP.AudioPlayer
 
         private void OnFilePlaylistStateChanged (object sender, FilePlaylistManagerEventArgs e)
         {
-            RefreshSounds(e.NewSounds, e.Refreshed);
+            if (e.Refreshed == CollectionRefreshed.Sounds)
+            {
+                RefreshSounds(e.NewSounds);
+            }
+            else
+            {
+                RefreshPlaylists(e.NewSounds);
+            }
             UpdateTime();
         }
 
@@ -268,11 +276,19 @@ namespace BatykAudioPlayer.APP.AudioPlayer
             this.soundEngine.Stop();
             if (this.currentAudioPlayerState == AudioPlayerState.Shuffled)
             {
-                var randomSound = random.Next(0, Sounds.Count);
-                SelectedSound = Sounds[randomSound];
-                this.currentSound = SelectedSound;
-                this.soundEngine.Play(SelectedSound.Path);
+                NextSoundRepeatShuffled(null, null);
                 return;
+            }
+            else if (this.currentAudioPlayerState == AudioPlayerState.RepeatPlaylist)
+            {
+                var indexOf = Sounds.IndexOf(SelectedSound);
+                if (indexOf == 0)
+                {
+                    SelectedSound = Sounds[Sounds.Count - 1];
+                    this.soundEngine.Play(SelectedSound.Path);
+                    this.currentSound = SelectedSound;
+                    return;
+                }
             }
             var index = Sounds.IndexOf(SelectedSound);
             SelectedSound = Sounds[--index];
@@ -308,10 +324,12 @@ namespace BatykAudioPlayer.APP.AudioPlayer
             this.soundEngine.Stop();
             if (this.currentAudioPlayerState == AudioPlayerState.Shuffled)
             {
-                var randomSound = random.Next(0, Sounds.Count);
-                SelectedSound = Sounds[randomSound];
-                this.currentSound = SelectedSound;
-                this.soundEngine.Play(SelectedSound.Path);
+                NextSoundRepeatShuffled(null, null);
+                return;
+            }
+            else if (this.currentAudioPlayerState == AudioPlayerState.RepeatPlaylist)
+            {
+                NextSoundRepeatPlaylist(null, null);
                 return;
             }
             var index = Sounds.IndexOf(SelectedSound);
@@ -404,8 +422,7 @@ namespace BatykAudioPlayer.APP.AudioPlayer
 
         private void ExecuteRepeatShuffle(object obj)
         {
-            SetMediaEndedEvent(NextSoundRepeatShuffled);
-            this.currentAudioPlayerState = AudioPlayerState.Shuffled;
+            SetMediaEndedEvent(NextSoundRepeatShuffled, AudioPlayerState.Shuffled);
         }
 
         private bool CanExecuteRepeatSound(object obj)
@@ -419,8 +436,7 @@ namespace BatykAudioPlayer.APP.AudioPlayer
 
         private void ExecuteRepeatSound(object obj)
         {
-            SetMediaEndedEvent(NextSoundRepeatSound);
-            this.currentAudioPlayerState = AudioPlayerState.RepeatSound;
+            SetMediaEndedEvent(NextSoundRepeatSound, AudioPlayerState.RepeatSound);
         }
 
         private bool CanExecuteRepeatPlaylist(object obj)
@@ -434,8 +450,7 @@ namespace BatykAudioPlayer.APP.AudioPlayer
 
         private void ExecuteRepeatPlaylist(object obj)
         {
-            SetMediaEndedEvent(NextSoundRepeatPlaylist);
-            this.currentAudioPlayerState = AudioPlayerState.RepeatPlaylist;
+            SetMediaEndedEvent(NextSoundRepeatPlaylist, AudioPlayerState.RepeatPlaylist);
         }
 
         private bool CanExecuteRepeatNormal(object obj)
@@ -449,8 +464,7 @@ namespace BatykAudioPlayer.APP.AudioPlayer
 
         private void ExecuteRepeatNormal(object obj)
         {
-            SetMediaEndedEvent(NextSoundRepeatNormal);
-            this.currentAudioPlayerState = AudioPlayerState.Normal;
+            SetMediaEndedEvent(NextSoundRepeatNormal, AudioPlayerState.Normal);
         }
 
         private bool CanSavePlaylist(object obj)
@@ -458,6 +472,8 @@ namespace BatykAudioPlayer.APP.AudioPlayer
             return true;
         }
 
+        //TODO: Temporary solution for saving playlist.
+        // Need to add property for handling playlist name.
         private void ExecuteSavePlaylist(object obj)
         {
             string playlistName = "temp.txt";
@@ -472,6 +488,7 @@ namespace BatykAudioPlayer.APP.AudioPlayer
                     sr.WriteLine(sound.Time);
                 }
             }
+            filePlaylistManager.SetDefaultPlaylist(Path.Combine(docPath, playlistName));
         }
 
         private bool CanOpenPlaylist(object obj)
@@ -491,6 +508,17 @@ namespace BatykAudioPlayer.APP.AudioPlayer
                 }
                 RefreshSounds(soundList);
             }
+            filePlaylistManager.SetDefaultPlaylist(SelectedPlaylist.Path);
+        }
+
+        private bool CanDeletePlaylist(object obj)
+        {
+            return SelectedPlaylist != null;
+        }
+
+        private void ExecuteDeletePlaylist(object obj)
+        {
+
         }
 
         #endregion
@@ -514,6 +542,7 @@ namespace BatykAudioPlayer.APP.AudioPlayer
             RepeatNormal = new RelayCommand(ExecuteRepeatNormal, CanExecuteRepeatNormal);
             SavePlaylist = new RelayCommand(ExecuteSavePlaylist, CanSavePlaylist);
             OpenPlaylist = new RelayCommand(ExecuteOpenPlaylist, CanOpenPlaylist);
+            DeletePlaylist = new RelayCommand(ExecuteDeletePlaylist, CanDeletePlaylist);
         }
 
         private void OnTick(object sender, EventArgs s)
@@ -540,25 +569,32 @@ namespace BatykAudioPlayer.APP.AudioPlayer
             Progress = this.soundEngine.GetFilePosition();
         }
 
-        private void RefreshSounds(List<Sound> sounds, CollectionRefreshed refreshed = CollectionRefreshed.Sounds)
+        private void RefreshSounds(List<Sound> sounds)
         {
             if (sounds == null)
             {
+                Sounds.Clear();
                 return;
             }
-            if (refreshed == CollectionRefreshed.Sounds)
-            {
-                Sounds.Clear();
-                sounds.ForEach(s => Sounds.Add(s));
-            }
-            else
-            {
-                Playlists.Clear();
-                sounds.ForEach(p => Playlists.Add(p));
-            }
+            Sounds.Clear();
+            sounds.ForEach(s => Sounds.Add(s));
         }
 
-        private void InitializePlaylist()
+        private void RefreshPlaylists(List<Sound> playlists)
+        {
+            if (playlists == null)
+            {
+                Playlists.Clear();
+                return;
+            }
+            Playlists.Clear();
+            playlists.ForEach(p => Playlists.Add(p));
+        }
+
+        /// <summary>
+        /// Initialize <see cref="Sounds"/> with files found in last opened directory or from default 'User\Music' folder.
+        /// </summary>
+        private void InitializeSoundlistFromDefaultDirectory()
         {
             if (filePlaylistManager.CheckIfDefaultDirectoryIsSet())
             {
@@ -569,7 +605,18 @@ namespace BatykAudioPlayer.APP.AudioPlayer
                 filePlaylistManager.SetDefaultDirectory(Environment.GetFolderPath(Environment.SpecialFolder.MyMusic));
                 filePlaylistManager.FillSoundsFromDefaultDirectory();               
             }
-            filePlaylistManager.FillPlaylistsFromDefaultDirectory();
+            filePlaylistManager.FillPlaylistFromDefaultDirectory();
+        }
+
+        /// <summary>
+        /// Initialize <see cref="Sounds"/> with files found in last opened playlist.
+        /// </summary>
+        private void InitializeSoundlistFromDefaultPlaylist()
+        {
+            if (filePlaylistManager.CheckIfDefaultPlaylistIsSet())
+            {
+                //filePlaylistManager.FillSoundsFromDefaultPlaylist();
+            }
         }
 
         private void InitializeDependencies()
@@ -644,7 +691,7 @@ namespace BatykAudioPlayer.APP.AudioPlayer
             SelectedSound = this.currentSound;
         }
 
-        private void SetMediaEndedEvent(EventHandler eventHandler)
+        private void SetMediaEndedEvent(EventHandler newEventHandler, AudioPlayerState newState)
         {
             if (this.currentAudioPlayerState == AudioPlayerState.Normal)
             {
@@ -662,7 +709,8 @@ namespace BatykAudioPlayer.APP.AudioPlayer
             {
                 this.soundEngine.MediaEnded -= NextSoundRepeatShuffled;
             }
-            this.soundEngine.MediaEnded += eventHandler;          
+            this.soundEngine.MediaEnded += newEventHandler;
+            this.currentAudioPlayerState = newState;
         }
 
         #endregion
