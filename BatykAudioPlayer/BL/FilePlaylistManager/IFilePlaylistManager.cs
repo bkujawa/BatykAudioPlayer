@@ -24,6 +24,11 @@ namespace BatykAudioPlayer.BL.FilePlaylistManager
         /// 
         /// </summary>
         List<Sound> FillPlaylist();
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        void FillPlaylistsFromDefaultDirectory();
 
         /// <summary>
         /// 

@@ -40,9 +40,9 @@ namespace BatykAudioPlayer.BL.FilePlaylistManager
 
         #region Event handlers methods
 
-        private void OnStateChanged(List<Sound> NewSounds)
+        private void OnStateChanged(FilePlaylistManagerEventArgs e)
         {
-            StateChanged?.Invoke(this, new FilePlaylistManagerEventArgs(NewSounds));
+            StateChanged?.Invoke(this, e);
         }
 
         private void OnError(string error)
@@ -70,6 +70,29 @@ namespace BatykAudioPlayer.BL.FilePlaylistManager
             return playlists;
         }
 
+        public void FillPlaylistsFromDefaultDirectory()
+        {
+            string docPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "AudioPlayer");
+            var playLists = new List<Sound>();
+            try
+            {
+                var allFiles = Directory.GetFiles(docPath);
+                foreach (var file in allFiles)
+                {
+                    var pathExtension = Path.GetExtension(file);
+                    if (pathExtension?.ToUpper() == ".TXT")
+                    {
+                        playLists.Add(new Sound(Path.GetFileNameWithoutExtension(file), file, null));
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                OnStateChanged(new FilePlaylistManagerEventArgs(null, CollectionRefreshed.Playlists));
+            }
+            OnStateChanged(new FilePlaylistManagerEventArgs(playLists, CollectionRefreshed.Playlists));
+        }
+
         public void FillSoundsFromDirectory(string dirPath)
         {
             if (!string.IsNullOrEmpty(dirPath))
@@ -86,7 +109,7 @@ namespace BatykAudioPlayer.BL.FilePlaylistManager
                         soundList.Add(new Sound(Path.GetFileNameWithoutExtension(file), file, duration.ToString(@"hh\:mm\:ss")));
                     }
                 }
-                OnStateChanged(soundList);
+                OnStateChanged(new FilePlaylistManagerEventArgs(soundList));
             }
             else
             {               
@@ -110,7 +133,7 @@ namespace BatykAudioPlayer.BL.FilePlaylistManager
                         soundList.Add(new Sound(Path.GetFileNameWithoutExtension(file), file, duration.ToString(@"hh\:mm\:ss")));
                     }
                 }
-                OnStateChanged(soundList);
+                OnStateChanged(new FilePlaylistManagerEventArgs(soundList));
             }
             else
             {
