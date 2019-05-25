@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace BatykAudioPlayer.APP.AudioPlayer
 {
+    /// <summary>
+    /// Represents state of audio player.
+    /// </summary>
     public enum AudioPlayerState
     {
         Normal,
