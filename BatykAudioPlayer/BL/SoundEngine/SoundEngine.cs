@@ -50,11 +50,11 @@ namespace BatykAudioPlayer.BL.SoundEngine
                     this.mediaEnded -= this.mediaEnded;
                 }
                 this.mediaEnded += value;
-                this.mediaPlayer.MediaEnded += this.mediaEnded;
+                this.mediaPlayer.MediaEnded += value;
             }
             remove
             {
-                this.mediaPlayer.MediaEnded -= this.mediaEnded;
+                this.mediaPlayer.MediaEnded -= value;
                 this.mediaEnded -= value;
             }
         }
