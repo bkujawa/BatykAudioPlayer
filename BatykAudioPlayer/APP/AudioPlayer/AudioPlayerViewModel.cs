@@ -27,6 +27,7 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         private Sound selectedSound;
         private Sound currentSound;
         private Sound selectedPlaylist;
+        private List<Sound> notPlayedSounds;
         private double progress;
         private string timeInfo;
         private string mute = "Mute";
@@ -421,6 +422,7 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         /// <param name="obj"></param>
         private void ExecuteRepeatShuffle(object obj)
         {
+            notPlayedSounds = Sounds.ToList();
             SetMediaEndedEvent(NextSoundRepeatShuffled, AudioPlayerState.Shuffled);
         }
 
@@ -544,6 +546,7 @@ namespace BatykAudioPlayer.APP.AudioPlayer
                 RefreshSounds(soundList);
             }
             filePlaylistManager.SetDefaultPlaylist(SelectedPlaylist.Path);
+            notPlayedSounds = Sounds.ToList();
         }
 
         /// <summary>
@@ -726,11 +729,16 @@ namespace BatykAudioPlayer.APP.AudioPlayer
 
         private void NextSoundRepeatShuffled(object sender, EventArgs e)
         {
-            var randomSound = random.Next(0, Sounds.Count);
-            this.currentSound = Sounds[randomSound];
+            if (notPlayedSounds.Count == 0)
+            {
+                notPlayedSounds = Sounds.ToList();
+            }
+            var randomSound = random.Next(0, notPlayedSounds.Count);
+            this.currentSound = notPlayedSounds[randomSound];
             SelectedSound = this.currentSound;
             this.soundEngine.Stop();
             this.soundEngine.Play(currentSound.Path);
+            notPlayedSounds.Remove(this.currentSound);
         }
 
         private void NextSoundRepeatSound(object sender, EventArgs e)
