@@ -83,7 +83,7 @@ namespace BatykAudioPlayer.BL.FilePlaylistManager
                     }
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 OnStateChanged(new FilePlaylistManagerEventArgs(null, CollectionRefreshed.Playlists));
             }
@@ -94,23 +94,44 @@ namespace BatykAudioPlayer.BL.FilePlaylistManager
         {
             if (!string.IsNullOrEmpty(dirPath))
             {
-                var allFiles = Directory.GetFiles(dirPath);
                 var soundList = new List<Sound>();
-                foreach (var file in allFiles)
-                {
-                    var pathExtension = Path.GetExtension(file);
-                    if (pathExtension?.ToUpper() == ".MP3")
-                    {
-                        Mp3FileReader reader = new Mp3FileReader(file);
-                        TimeSpan duration = reader.TotalTime;
-                        soundList.Add(new Sound(Path.GetFileNameWithoutExtension(file), file, duration.ToString(@"hh\:mm\:ss")));
-                    }
-                }
+                FillSoundsFromDirectoryRecursive(dirPath, ref soundList);
                 OnStateChanged(new FilePlaylistManagerEventArgs(soundList));
             }
             else
-            {               
+            {
                 OnStateChanged(null);
+            }
+        }
+
+        private void FillSoundsFromDirectoryRecursive(string dirPath, ref List<Sound> soundList)
+        {
+            var allFiles = Directory.GetFiles(dirPath);
+            // TODO: Make searching for files faster, nonblocking, multithreading.
+            //allFiles.ToList().ForEach(file =>
+            //{
+            //    var pathExtension = Path.GetExtension(file);
+            //    if (pathExtension?.ToUpper() == ".MP3")
+            //    {
+            //        Mp3FileReader reader = new Mp3FileReader(file);
+            //        TimeSpan duration = reader.TotalTime;
+            //        soundList.Add(new Sound(Path.GetFileNameWithoutExtension(file), file, duration.ToString(@"hh\:mm\:ss")));
+            //    }
+            //});
+            foreach (var file in allFiles)
+            {
+                var pathExtension = Path.GetExtension(file);
+                if (pathExtension?.ToUpper() == ".MP3")
+                {
+                    Mp3FileReader reader = new Mp3FileReader(file);
+                    TimeSpan duration = reader.TotalTime;
+                    soundList.Add(new Sound(Path.GetFileNameWithoutExtension(file), file, duration.ToString(@"hh\:mm\:ss")));
+                }
+            }
+            var allDirectories = Directory.GetDirectories(dirPath);
+            foreach(var directory in allDirectories)
+            {
+                FillSoundsFromDirectoryRecursive(directory, ref soundList);
             }
         }
 
@@ -118,23 +139,7 @@ namespace BatykAudioPlayer.BL.FilePlaylistManager
         {
             if (!string.IsNullOrEmpty(defaultDirectory))
             {
-                var allFiles = Directory.GetFiles(defaultDirectory);
-                var soundList = new List<Sound>();
-                foreach (var file in allFiles)
-                {
-                    var pathExtension = Path.GetExtension(file);
-                    if (pathExtension?.ToUpper() == ".MP3")
-                    {
-                        Mp3FileReader reader = new Mp3FileReader(file);
-                        TimeSpan duration = reader.TotalTime;
-                        soundList.Add(new Sound(Path.GetFileNameWithoutExtension(file), file, duration.ToString(@"hh\:mm\:ss")));
-                    }
-                }
-                OnStateChanged(new FilePlaylistManagerEventArgs(soundList));
-            }
-            else
-            {
-                OnStateChanged(null);
+                FillSoundsFromDirectory(defaultDirectory);
             }
         }
 
