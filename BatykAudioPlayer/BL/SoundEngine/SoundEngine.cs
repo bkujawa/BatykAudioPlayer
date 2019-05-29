@@ -14,7 +14,6 @@ namespace BatykAudioPlayer.BL.SoundEngine
 
         private readonly MediaPlayer mediaPlayer;
         private SoundState? currentState;
-        //private AudioPlayerState currentAudioPlayerState;
         private string currentPath;
         private double volume;
 
@@ -22,6 +21,10 @@ namespace BatykAudioPlayer.BL.SoundEngine
 
         #region Properties
 
+        /// <summary>
+        /// Represents current volume of sound engine. 
+        /// Respects max and min boundaries.
+        /// </summary>
         public double Volume
         {
             get => this.volume;
@@ -40,6 +43,9 @@ namespace BatykAudioPlayer.BL.SoundEngine
             }
         }
 
+        /// <summary>
+        /// Event handler used for MediaEnded event. Releases previous event before adds new event. No reason to explicitly remove events.
+        /// </summary>
         public event EventHandler MediaEnded
         {
             add

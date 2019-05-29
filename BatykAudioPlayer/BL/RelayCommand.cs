@@ -8,6 +8,9 @@ using System.Windows.Input;
 
 namespace BatykAudioPlayer.BL
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class RelayCommand : ICommand
     {
         // Fields
