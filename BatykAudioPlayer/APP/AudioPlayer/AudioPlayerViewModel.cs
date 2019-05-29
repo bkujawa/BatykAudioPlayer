@@ -525,7 +525,7 @@ namespace BatykAudioPlayer.APP.AudioPlayer
                     sr.WriteLine(sound.Time);
                 }
             }
-            filePlaylistManager.SetDefaultPlaylist(Path.Combine(docPath, SavedPlaylistName));
+            this.filePlaylistManager.SetDefaultPlaylist(Path.Combine(docPath, SavedPlaylistName));
             Playlists.Add(new Sound(SavedPlaylistName, Path.Combine(docPath, SavedPlaylistName)));
             RefreshPlaylists(Playlists.ToList());
             SavedPlaylistName = "";
@@ -554,10 +554,10 @@ namespace BatykAudioPlayer.APP.AudioPlayer
                 }
                 RefreshSounds(soundList);
             }
-            filePlaylistManager.SetDefaultPlaylist(SelectedPlaylist.Path);
+            this.filePlaylistManager.SetDefaultPlaylist(SelectedPlaylist.Path);
             if (this.currentAudioPlayerState == AudioPlayerState.Shuffled)
             {
-                notPlayedSounds = Sounds.ToList();
+                this.notPlayedSounds = Sounds.ToList();
             }
         }
 
