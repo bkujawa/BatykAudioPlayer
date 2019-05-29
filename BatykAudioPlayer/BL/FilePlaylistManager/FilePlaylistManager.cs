@@ -96,11 +96,15 @@ namespace BatykAudioPlayer.BL.FilePlaylistManager
             {
                 var soundList = new List<Sound>();
                 FillSoundsFromDirectoryRecursive(dirPath, ref soundList);
-                OnStateChanged(new FilePlaylistManagerEventArgs(soundList));
+                if (soundList.Any())
+                {
+                    OnStateChanged(new FilePlaylistManagerEventArgs(soundList));
+                }
             }
             else
             {
-                OnStateChanged(null);
+                OnStateChanged(new FilePlaylistManagerEventArgs(new List<Sound>()));
+                OnError("FillSoundsFromDirectory error.");
             }
         }
 
