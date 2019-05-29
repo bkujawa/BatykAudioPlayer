@@ -106,7 +106,6 @@ namespace BatykAudioPlayer.BL.FilePlaylistManager
 
         private void FillSoundsFromDirectoryRecursive(string dirPath, ref List<Sound> soundList)
         {
-            var allFiles = Directory.GetFiles(dirPath);
             // TODO: Make searching for files faster, nonblocking, multithreading.
             //allFiles.ToList().ForEach(file =>
             //{
@@ -118,6 +117,7 @@ namespace BatykAudioPlayer.BL.FilePlaylistManager
             //        soundList.Add(new Sound(Path.GetFileNameWithoutExtension(file), file, duration.ToString(@"hh\:mm\:ss")));
             //    }
             //});
+            var allFiles = Directory.GetFiles(dirPath);
             foreach (var file in allFiles)
             {
                 var pathExtension = Path.GetExtension(file);
