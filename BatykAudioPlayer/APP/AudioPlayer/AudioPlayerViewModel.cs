@@ -31,6 +31,7 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         private double progress;
         private string timeInfo;
         private string mute = "Mute";
+        private string savedPlaylistName;
         Random random;
 
         #endregion
@@ -89,6 +90,19 @@ namespace BatykAudioPlayer.APP.AudioPlayer
             set
             {
                 this.mute = value;
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
+        /// Property used in save playlist textbox. 
+        /// </summary>
+        public string SavedPlaylistName
+        {
+            get => this.savedPlaylistName;
+            set
+            {
+                this.savedPlaylistName = value;
                 OnPropertyChanged();
             }
         }
@@ -424,6 +438,10 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         {
             this.notPlayedSounds = Sounds.ToList();
             SetMediaEndedEvent(NextSoundRepeatShuffled, AudioPlayerState.Shuffled);
+            if (this.currentSoundState == SoundState.Playing || this.currentSoundState == SoundState.Paused)
+            {
+                this.notPlayedSounds.Remove(this.currentSound);
+            }
         }
 
         /// <summary>
@@ -494,14 +512,11 @@ namespace BatykAudioPlayer.APP.AudioPlayer
             return true;
         }
 
-        //TODO: Temporary solution for saving playlist.
-        // Need to add property for handling playlist name.
         private void ExecuteSavePlaylist(object obj)
         {
-            string playlistName = "temp.txt";
             string docPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "AudioPlayer");
             Directory.CreateDirectory(docPath);
-            using (StreamWriter sr = new StreamWriter(Path.Combine(docPath, playlistName)))
+            using (StreamWriter sr = new StreamWriter(Path.Combine(docPath, SavedPlaylistName + ".txt")))
             {
                 foreach (var sound in Sounds)
                 {
@@ -510,8 +525,10 @@ namespace BatykAudioPlayer.APP.AudioPlayer
                     sr.WriteLine(sound.Time);
                 }
             }
-            filePlaylistManager.SetDefaultPlaylist(Path.Combine(docPath, playlistName));
-            //RefreshPlaylists();
+            filePlaylistManager.SetDefaultPlaylist(Path.Combine(docPath, SavedPlaylistName));
+            Playlists.Add(new Sound(SavedPlaylistName, Path.Combine(docPath, SavedPlaylistName)));
+            RefreshPlaylists(Playlists.ToList());
+            SavedPlaylistName = "";
         }
 
         /// <summary>
@@ -531,14 +548,17 @@ namespace BatykAudioPlayer.APP.AudioPlayer
             {
                 var soundList = new List<Sound>();
                 var allFiles = File.ReadAllLines(SelectedPlaylist.Path);
-                for (int i = 0; i < allFiles.Length - 1; i = i + 2)
+                for (int i = 0; i < allFiles.Length - 1; i = i + 3)
                 {
                     soundList.Add(new Sound(allFiles[i], allFiles[i + 1], allFiles[i + 2]));
                 }
                 RefreshSounds(soundList);
             }
             filePlaylistManager.SetDefaultPlaylist(SelectedPlaylist.Path);
-            notPlayedSounds = Sounds.ToList();
+            if (this.currentAudioPlayerState == AudioPlayerState.Shuffled)
+            {
+                notPlayedSounds = Sounds.ToList();
+            }
         }
 
         /// <summary>
@@ -546,14 +566,15 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         /// </summary>
         private bool CanDeletePlaylist(object obj)
         {
-            return SelectedPlaylist != null;
+            //return SelectedPlaylist != null;
+            return false;
         }
 
         /// <summary>
         /// 
         /// </summary>
         private void ExecuteDeletePlaylist(object obj)
-        {
+        { 
 
         }
 
