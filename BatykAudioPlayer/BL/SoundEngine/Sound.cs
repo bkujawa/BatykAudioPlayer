@@ -31,7 +31,7 @@ namespace BatykAudioPlayer.BL.SoundEngine
         /// </summary>
         /// <param name="Name">Name of sound.</param>
         /// <param name="Path">URI path to sound file.</param>
-        public Sound(string Name, string Path, string Time)
+        public Sound(string Name, string Path, string Time = null)
         {
             this.Name = Name;
             this.Path = Path;
