@@ -37,6 +37,9 @@ namespace BatykAudioPlayer.APP.AudioPlayer
 
         #region Properties
 
+        /// <summary>
+        /// Represents sound selected by user in list box.
+        /// </summary>
         public Sound SelectedSound
         {
             get => this.selectedSound;
@@ -47,6 +50,9 @@ namespace BatykAudioPlayer.APP.AudioPlayer
             }
         }
 
+        /// <summary>
+        /// Represents playlist selected by user in list box.
+        /// </summary>
         public Sound SelectedPlaylist
         {
             get => this.selectedPlaylist;
@@ -87,12 +93,18 @@ namespace BatykAudioPlayer.APP.AudioPlayer
             }
         }
 
+        /// <summary>
+        /// Observable collection of Sound objects, represents data for current music list box.
+        /// </summary>
         public ObservableCollection<Sound> Sounds
         {
             get;
             private set;
         }
 
+        /// <summary>
+        /// Observable collection of Sound objects, represents data for current playlists list box.
+        /// </summary>
         public ObservableCollection<Sound> Playlists
         {
             get;
@@ -151,6 +163,10 @@ namespace BatykAudioPlayer.APP.AudioPlayer
             MessageBox.Show(e.ErrorDetails, "FilePlaylistManager error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
+        /// <summary>
+        /// Refresh current list of sounds or playlists.
+        /// </summary>
+        /// <param name="e">Contains information about new list of sounds, and where they should be applied.</param>
         private void OnFilePlaylistStateChanged (object sender, FilePlaylistManagerEventArgs e)
         {
             if (e.Refreshed == CollectionRefreshed.Sounds)
@@ -169,55 +185,53 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         #region ICommand implementation
 
         /// <summary>
-        /// 
+        /// Returns true if <see cref="currentSoundState"/> is not Unknown and SelectedSound is not null.
         /// </summary>
-        /// <param name="obj"></param>
         private bool CanExecutePlay(object obj)
         {
-            return this.SelectedSound != null && (this.currentSoundState != SoundState.Unknown || this.currentSoundState == null);
+            return SelectedSound != null && (this.currentSoundState != SoundState.Unknown || this.currentSoundState == null);
         }
 
         /// <summary>
         /// Play <see cref="SelectedSound"/>.
         /// </summary>
-        /// <param name="obj"></param>
         private void ExecutePlay(object obj)
         {
             this.soundEngine.Play(SelectedSound.Path);
             this.currentSound = SelectedSound;
+            if (this.currentAudioPlayerState == AudioPlayerState.Shuffled)
+            {
+                this.notPlayedSounds.Remove(this.currentSound);
+            }
         }
 
         /// <summary>
-        /// 
+        /// Returns true if <see cref="currentSoundState"/> is Playing.
         /// </summary>
-        /// <param name="obj"></param>
         private bool CanExecutePause(object obj)
         {
             return this.currentSoundState == SoundState.Playing;
         }
 
         /// <summary>
-        /// 
+        /// Pauses playing.
         /// </summary>
-        /// <param name="obj"></param>
         private void ExecutePause(object obj)
         {
             this.soundEngine.Pause();
         }
 
         /// <summary>
-        /// 
+        /// Returns true if <see cref="currentSoundState"/> is either Playing or Paused.
         /// </summary>
-        /// <param name="obj"></param>
         private bool CanExecuteStop(object obj)
         {
             return this.currentSoundState == SoundState.Playing || this.currentSoundState == SoundState.Paused;
         }
 
         /// <summary>
-        /// 
+        /// Stops playing.
         /// </summary>
-        /// <param name="obj"></param>
         private void ExecuteStop(object obj)
         {
             this.soundEngine.Stop();
@@ -226,7 +240,6 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="obj"></param>
         private bool CanExecuteOpen(object obj)
         {
             return true;
@@ -235,7 +248,6 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="obj"></param>
         private void ExecuteOpen(object obj)
         {
             var dialog = new FolderBrowserDialog();
@@ -248,7 +260,6 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="obj"></param>
         private bool CanExecutePlayPrevious(object obj)
         {
             if (SelectedSound == null)
@@ -266,7 +277,6 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="obj"></param>
         private void ExecutePlayPrevious(object obj)
         {
             this.soundEngine.Stop();
@@ -277,7 +287,7 @@ namespace BatykAudioPlayer.APP.AudioPlayer
             }
             else if (this.currentAudioPlayerState == AudioPlayerState.RepeatPlaylist)
             {
-                var indexOf = Sounds.IndexOf(SelectedSound);
+                var indexOf = Sounds.IndexOf(this.currentSound);
                 if (indexOf == 0)
                 {
                     SelectedSound = Sounds[Sounds.Count - 1];
@@ -286,7 +296,7 @@ namespace BatykAudioPlayer.APP.AudioPlayer
                     return;
                 }
             }
-            var index = Sounds.IndexOf(SelectedSound);
+            var index = Sounds.IndexOf(this.currentSound);
             SelectedSound = Sounds[--index];
             this.soundEngine.Play(SelectedSound.Path);
             this.currentSound = SelectedSound;
@@ -295,7 +305,6 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="obj"></param>
         private bool CanExecutePlayNext(object obj)
         {
             if (SelectedSound == null)
@@ -313,7 +322,6 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         /// <summary>
         ///
         /// </summary>
-        /// <param name="obj"></param>
         private void ExecutePlayNext(object obj)
         {
             this.soundEngine.Stop();
@@ -327,7 +335,7 @@ namespace BatykAudioPlayer.APP.AudioPlayer
                 NextSoundRepeatPlaylist(null, null);
                 return;
             }
-            var index = Sounds.IndexOf(SelectedSound);
+            var index = Sounds.IndexOf(this.currentSound);
             SelectedSound = Sounds[++index];
             this.soundEngine.Play(SelectedSound.Path);
             this.currentSound = SelectedSound;
@@ -336,7 +344,6 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="obj"></param>
         private bool CanExecuteVolumeUp(object obj)
         {
             if (this.soundEngine.Volume < 1)
@@ -349,7 +356,6 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="obj"></param>
         private void ExecuteVolumeUp(object obj)
         {
             this.soundEngine.Volume += 0.1;
@@ -358,7 +364,6 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="obj"></param>
         private bool CanExecuteVolumeDown(object obj)
         {
             if (this.soundEngine.Volume > 0)
@@ -371,7 +376,6 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="obj"></param>
         private void ExecuteVolumeDown(object obj)
         {
             soundEngine.Volume -= 0.1;
@@ -380,7 +384,6 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="obj"></param>
         private bool CanExecuteVolumeMute(object obj)
         {
             return true;
@@ -389,7 +392,6 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="obj"></param>
         private void ExecuteVolumeMute(object obj)
         {
             this.soundEngine.VolumeMute();
@@ -406,7 +408,6 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="obj"></param>
         private bool CanExecuteRepeatShuffle(object obj)
         {
             if (this.currentAudioPlayerState == AudioPlayerState.Shuffled)
@@ -419,17 +420,15 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="obj"></param>
         private void ExecuteRepeatShuffle(object obj)
         {
-            notPlayedSounds = Sounds.ToList();
+            this.notPlayedSounds = Sounds.ToList();
             SetMediaEndedEvent(NextSoundRepeatShuffled, AudioPlayerState.Shuffled);
         }
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="obj"></param>
         private bool CanExecuteRepeatSound(object obj)
         {
             if (this.currentAudioPlayerState == AudioPlayerState.RepeatSound)
@@ -442,7 +441,6 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="obj"></param>
         private void ExecuteRepeatSound(object obj)
         {
             SetMediaEndedEvent(NextSoundRepeatSound, AudioPlayerState.RepeatSound);
@@ -451,7 +449,6 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="obj"></param>
         private bool CanExecuteRepeatPlaylist(object obj)
         {
             if (this.currentAudioPlayerState == AudioPlayerState.RepeatPlaylist)
@@ -464,7 +461,6 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="obj"></param>
         private void ExecuteRepeatPlaylist(object obj)
         {
             SetMediaEndedEvent(NextSoundRepeatPlaylist, AudioPlayerState.RepeatPlaylist);
@@ -473,7 +469,6 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="obj"></param>
         private bool CanExecuteRepeatNormal(object obj)
         {
             if (this.currentAudioPlayerState == AudioPlayerState.Normal)
@@ -486,7 +481,6 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="obj"></param>
         private void ExecuteRepeatNormal(object obj)
         {
             SetMediaEndedEvent(NextSoundRepeatNormal, AudioPlayerState.Normal);
@@ -495,7 +489,6 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="obj"></param>
         private bool CanSavePlaylist(object obj)
         {
             return true;
@@ -518,12 +511,12 @@ namespace BatykAudioPlayer.APP.AudioPlayer
                 }
             }
             filePlaylistManager.SetDefaultPlaylist(Path.Combine(docPath, playlistName));
+            //RefreshPlaylists();
         }
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="obj"></param>
         private bool CanOpenPlaylist(object obj)
         {
             return SelectedPlaylist != null;
@@ -532,7 +525,6 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="obj"></param>
         private void ExecuteOpenPlaylist(object obj)
         {
             if (!string.IsNullOrEmpty(SelectedPlaylist.Path))
@@ -552,7 +544,6 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="obj"></param>
         private bool CanDeletePlaylist(object obj)
         {
             return SelectedPlaylist != null;
@@ -561,7 +552,6 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="obj"></param>
         private void ExecuteDeletePlaylist(object obj)
         {
 
@@ -729,15 +719,15 @@ namespace BatykAudioPlayer.APP.AudioPlayer
 
         private void NextSoundRepeatShuffled(object sender, EventArgs e)
         {
-            if (notPlayedSounds.Count == 0)
+            if (this.notPlayedSounds.Count == 0)
             {
-                notPlayedSounds = Sounds.ToList();
+                this.notPlayedSounds = Sounds.ToList();
             }
-            var randomSound = random.Next(0, notPlayedSounds.Count);
-            this.currentSound = notPlayedSounds[randomSound];
+            var randomSound = random.Next(0, this.notPlayedSounds.Count);
+            this.currentSound = this.notPlayedSounds[randomSound];
             SelectedSound = this.currentSound;
             this.soundEngine.Stop();
-            this.soundEngine.Play(currentSound.Path);
+            this.soundEngine.Play(this.currentSound.Path);
             notPlayedSounds.Remove(this.currentSound);
         }
 
@@ -767,22 +757,6 @@ namespace BatykAudioPlayer.APP.AudioPlayer
 
         private void SetMediaEndedEvent(EventHandler newEventHandler, AudioPlayerState newState)
         {
-            //if (this.currentAudioPlayerState == AudioPlayerState.Normal)
-            //{
-            //    this.soundEngine.MediaEnded -= NextSoundRepeatNormal;
-            //}
-            //else if (this.currentAudioPlayerState == AudioPlayerState.RepeatPlaylist)
-            //{
-            //    this.soundEngine.MediaEnded -= NextSoundRepeatPlaylist;
-            //}
-            //else if (this.currentAudioPlayerState == AudioPlayerState.RepeatSound)
-            //{
-            //    this.soundEngine.MediaEnded -= NextSoundRepeatSound;
-            //}
-            //else if (this.currentAudioPlayerState == AudioPlayerState.Shuffled)
-            //{
-            //    this.soundEngine.MediaEnded -= NextSoundRepeatShuffled;
-            //}
             this.soundEngine.MediaEnded += newEventHandler;
             this.currentAudioPlayerState = newState;
         }
