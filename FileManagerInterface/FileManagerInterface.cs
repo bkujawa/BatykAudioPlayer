@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using BatykAudioPlayer.BL.SoundEngine;
+using System.Threading.Tasks;
+using BatykAudioPlayer.BL.SoundEngineInterface;
 
-namespace BatykAudioPlayer.BL.FilePlaylistManager
+namespace BatykAudioPlayer.BL.FileManagerInterface
 {
-    public interface IFilePlaylistManager
+    public interface IFileManager
     {
         /// <summary>
         /// 
@@ -48,7 +49,7 @@ namespace BatykAudioPlayer.BL.FilePlaylistManager
         /// 
         /// </summary>
         bool CheckIfDefaultDirectoryIsSet();
-        
+
         /// <summary>
         /// 
         /// </summary>
@@ -58,11 +59,37 @@ namespace BatykAudioPlayer.BL.FilePlaylistManager
         /// <summary>
         /// 
         /// </summary>
-        event EventHandler<FilePlaylistManagerEventArgs> StateChanged;
+        event EventHandler<FileManagerEventArgs> StateChanged;
 
         /// <summary>
         /// 
         /// </summary>
-        event EventHandler<FilePlaylistManagerErrorArgs> FilePlaylistError;
+        event EventHandler<FileManagerErrorArgs> FilePlaylistError;
+    }
+
+    public class FileManagerEventArgs : EventArgs
+    {
+        public List<Sound> NewSounds { get; private set; }
+        public CollectionRefreshed Refreshed { get; private set; }
+        public FileManagerEventArgs(List<Sound> NewSounds, CollectionRefreshed Refreshed = CollectionRefreshed.Sounds)
+        {
+            this.NewSounds = NewSounds;
+            this.Refreshed = Refreshed;
+        }
+    }
+
+    public class FileManagerErrorArgs
+    {
+        public string ErrorDetails { get; private set; }
+        public FileManagerErrorArgs(string ErrorDetails)
+        {
+            this.ErrorDetails = ErrorDetails;
+        }
+    }
+
+    public enum CollectionRefreshed
+    {
+        Sounds,
+        Playlists
     }
 }

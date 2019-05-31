@@ -4,13 +4,15 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BatykAudioPlayer.BL.SoundEngine;
-using System.Configuration;
+using BatykAudioPlayer.BL.FileManagerInterface;
+using BatykAudioPlayer.BL.SoundEngineInterface;
 using NAudio.Wave;
+using System.Configuration;
 
-namespace BatykAudioPlayer.BL.FilePlaylistManager
+
+namespace BatykAudioPlayer.BL.FileManager
 {
-    public class FilePlaylistManager : IFilePlaylistManager
+    public class FileManager : IFileManager
     {
         #region Private fields
 
@@ -21,14 +23,14 @@ namespace BatykAudioPlayer.BL.FilePlaylistManager
 
         #region Event handlers
 
-        public event EventHandler<FilePlaylistManagerEventArgs> StateChanged;
-        public event EventHandler<FilePlaylistManagerErrorArgs> FilePlaylistError;
+        public event EventHandler<FileManagerEventArgs> StateChanged;
+        public event EventHandler<FileManagerErrorArgs> FilePlaylistError;
 
         #endregion
 
         #region Constructor
 
-        public FilePlaylistManager()
+        public FileManager()
         {
             defaultDirectory = ReturnDefaultDirectoryFromConfig();
             defaultPlaylist = ReturnDefaultPlaylistFromConfig();
@@ -37,14 +39,14 @@ namespace BatykAudioPlayer.BL.FilePlaylistManager
 
         #region Event handlers methods
 
-        private void OnStateChanged(FilePlaylistManagerEventArgs e)
+        private void OnStateChanged(FileManagerEventArgs e)
         {
             StateChanged?.Invoke(this, e);
         }
 
         private void OnError(string error)
         {
-            FilePlaylistError?.Invoke(this, new FilePlaylistManagerErrorArgs(error));
+            FilePlaylistError?.Invoke(this, new FileManagerErrorArgs(error));
         }
 
         #endregion
@@ -85,9 +87,9 @@ namespace BatykAudioPlayer.BL.FilePlaylistManager
             }
             catch (Exception ex)
             {
-                OnStateChanged(new FilePlaylistManagerEventArgs(null, CollectionRefreshed.Playlists));
+                OnStateChanged(new FileManagerEventArgs(null, CollectionRefreshed.Playlists));
             }
-            OnStateChanged(new FilePlaylistManagerEventArgs(playLists, CollectionRefreshed.Playlists));
+            OnStateChanged(new FileManagerEventArgs(playLists, CollectionRefreshed.Playlists));
         }
 
         public void FillSoundsFromDirectory(string dirPath)
@@ -98,12 +100,12 @@ namespace BatykAudioPlayer.BL.FilePlaylistManager
                 FillSoundsFromDirectoryRecursive(dirPath, ref soundList);
                 if (soundList.Any())
                 {
-                    OnStateChanged(new FilePlaylistManagerEventArgs(soundList));
+                    OnStateChanged(new FileManagerEventArgs(soundList));
                 }
             }
             else
             {
-                OnStateChanged(new FilePlaylistManagerEventArgs(new List<Sound>()));
+                OnStateChanged(new FileManagerEventArgs(new List<Sound>()));
                 OnError("FillSoundsFromDirectory error.");
             }
         }
@@ -133,7 +135,7 @@ namespace BatykAudioPlayer.BL.FilePlaylistManager
                 }
             }
             var allDirectories = Directory.GetDirectories(dirPath);
-            foreach(var directory in allDirectories)
+            foreach (var directory in allDirectories)
             {
                 FillSoundsFromDirectoryRecursive(directory, ref soundList);
             }
@@ -232,29 +234,5 @@ namespace BatykAudioPlayer.BL.FilePlaylistManager
         #endregion
     }
 
-    public class FilePlaylistManagerEventArgs : EventArgs
-    {
-        public List<Sound> NewSounds { get; private set; }
-        public CollectionRefreshed Refreshed { get; private set; }
-        public FilePlaylistManagerEventArgs(List<Sound> NewSounds, CollectionRefreshed Refreshed = CollectionRefreshed.Sounds)
-        {
-            this.NewSounds = NewSounds;
-            this.Refreshed = Refreshed;
-        }
-    }
 
-    public class FilePlaylistManagerErrorArgs
-    {
-        public string ErrorDetails { get; private set; }
-        public FilePlaylistManagerErrorArgs(string ErrorDetails)
-        {
-            this.ErrorDetails = ErrorDetails;
-        }
-    }
-
-    public enum CollectionRefreshed
-    {
-        Sounds,
-        Playlists
-    }
 }
