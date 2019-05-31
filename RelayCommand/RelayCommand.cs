@@ -6,11 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace BatykAudioPlayer.BL
+namespace BatykAudioPlayer.BL.RelayCommand
 {
-    /// <summary>
-    /// 
-    /// </summary>
     public class RelayCommand : ICommand
     {
         // Fields
