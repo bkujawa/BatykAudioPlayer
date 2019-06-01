@@ -41,8 +41,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IFileManager.cs" />
+    <Compile Include="FileManagerInterface.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SoundEngineInterface\SoundEngineInterface.csproj">
+      <Project>{b64458ce-5a92-46dc-8af8-aae72c290585}</Project>
+      <Name>SoundEngineInterface</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
