@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BatykAudioPlayer.BL.SoundEngine
+namespace BatykAudioPlayer.BL.SoundEngineInterface
 {
     /// <summary>
     /// Interface implemented in <see cref="SoundEngine"/>.
     /// </summary>
-    interface ISoundEngine
+    public interface ISoundEngine
     {
         /// <summary>
         /// 
@@ -64,5 +64,28 @@ namespace BatykAudioPlayer.BL.SoundEngine
         /// 
         /// </summary>
         double Volume { get; set; }
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        void Initialize();
+    }
+
+    public class SoundEngineEventArgs : EventArgs
+    {
+        public SoundState NewState { get; private set; }
+        public SoundEngineEventArgs(SoundState NewState)
+        {
+            this.NewState = NewState;
+        }
+    }
+
+    public class SoundEngineErrorArgs
+    {
+        public string ErrorDetails { get; private set; }
+        public SoundEngineErrorArgs(string ErrorDetails)
+        {
+            this.ErrorDetails = ErrorDetails;
+        }
     }
 }

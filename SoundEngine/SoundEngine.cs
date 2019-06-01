@@ -4,15 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
-using BatykAudioPlayer.APP.AudioPlayer;
+using BatykAudioPlayer.BL.SoundEngineInterface;
 
 namespace BatykAudioPlayer.BL.SoundEngine
 {
-    public class SoundEngine : ISoundEngine
+    public class SoundEngineImplementation : ISoundEngine
     {
         #region Private fields
 
-        private readonly MediaPlayer mediaPlayer;
+        private MediaPlayer mediaPlayer;
         private SoundState? currentState;
         private string currentPath;
         private double volume;
@@ -29,7 +29,7 @@ namespace BatykAudioPlayer.BL.SoundEngine
         {
             get => this.volume;
             set
-            {              
+            {
                 this.volume = value;
                 if (this.volume > 1)
                 {
@@ -75,16 +75,6 @@ namespace BatykAudioPlayer.BL.SoundEngine
 
         #endregion
 
-        #region Constructor
-
-        public SoundEngine()
-        {
-            this.mediaPlayer = new MediaPlayer();
-            this.volume = this.mediaPlayer.Volume;
-        }
-
-        #endregion
-
         #region Event handlers
 
         private void OnStateChanged(SoundState newState)
@@ -120,7 +110,6 @@ namespace BatykAudioPlayer.BL.SoundEngine
                     }
                     OnStateChanged(SoundState.Playing);
                 }
-
             }
             catch (Exception ex)
             {
@@ -195,24 +184,12 @@ namespace BatykAudioPlayer.BL.SoundEngine
             return 0;
         }
 
+        public void Initialize()
+        {
+            this.mediaPlayer = new MediaPlayer();
+            this.volume = this.mediaPlayer.Volume;
+        }
+
         #endregion
-    }
-
-    public class SoundEngineEventArgs : EventArgs
-    {
-        public SoundState NewState { get; private set; }
-        public SoundEngineEventArgs(SoundState NewState)
-        {
-            this.NewState = NewState;
-        }
-    }
-
-    public class SoundEngineErrorArgs
-    {
-        public string ErrorDetails { get; private set; }
-        public SoundEngineErrorArgs(string ErrorDetails)
-        {
-            this.ErrorDetails = ErrorDetails;
-        }
     }
 }

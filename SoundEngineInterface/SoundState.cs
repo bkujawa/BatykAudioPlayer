@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BatykAudioPlayer.BL.SoundEngine
+namespace BatykAudioPlayer.BL.SoundEngineInterface
 {
     /// <summary>
     /// Enum representation of <see cref="SoundEngine"/> (<see cref="System.Windows.Media.MediaPlayer"/>) state.
