@@ -12,7 +12,7 @@ using System.Configuration;
 
 namespace BatykAudioPlayer.BL.FileManager
 {
-    public class FileManager : IFileManager
+    public class FileManagerImplementation : IFileManager
     {
         #region Private fields
 
@@ -26,15 +26,6 @@ namespace BatykAudioPlayer.BL.FileManager
         public event EventHandler<FileManagerEventArgs> StateChanged;
         public event EventHandler<FileManagerErrorArgs> FilePlaylistError;
 
-        #endregion
-
-        #region Constructor
-
-        public FileManager()
-        {
-            defaultDirectory = ReturnDefaultDirectoryFromConfig();
-            defaultPlaylist = ReturnDefaultPlaylistFromConfig();
-        }
         #endregion
 
         #region Event handlers methods
@@ -203,6 +194,12 @@ namespace BatykAudioPlayer.BL.FileManager
                 return false;
             }
             return true;
+        }
+
+        public void Initialize()
+        {
+            defaultDirectory = ReturnDefaultDirectoryFromConfig();
+            defaultPlaylist = ReturnDefaultPlaylistFromConfig();
         }
 
         #endregion

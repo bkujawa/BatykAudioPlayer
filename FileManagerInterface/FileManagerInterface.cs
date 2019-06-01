@@ -65,6 +65,11 @@ namespace BatykAudioPlayer.BL.FileManagerInterface
         /// 
         /// </summary>
         event EventHandler<FileManagerErrorArgs> FilePlaylistError;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        void Initialize();
     }
 
     public class FileManagerEventArgs : EventArgs
