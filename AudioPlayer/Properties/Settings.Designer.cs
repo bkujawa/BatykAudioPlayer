@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace BatykAudioPlayer.Properties
+namespace AudioPlayer.Properties
 {
 
 

@@ -1,17 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Configuration;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Forms;
-using System.Windows.Input;
-using System.Windows.Threading;
-using BatykAudioPlayer.BL;
 using BatykAudioPlayer.BL.SoundEngine;
-using BatykAudioPlayer.BL.FilePlaylistManager;
+using BatykAudioPlayer.BL.SoundEngineInterface;
+using BatykAudioPlayer.BL.FileManager;
+using BatykAudioPlayer.BL.FileManagerInterface;
+using BatykAudioPlayer.APP.ViewModel;
+using BatykAudioPlayer.BL.RelayCommand;
+using System.Windows.Threading;
+using System.Collections.ObjectModel;
+using System.Windows.Input;
+using System.Windows.Forms;
+using System.IO;
 
 namespace BatykAudioPlayer.APP.AudioPlayer
 {
@@ -20,7 +22,7 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         #region Private fields
 
         private ISoundEngine soundEngine;
-        private IFilePlaylistManager filePlaylistManager;
+        private IFileManager fileManager;
         private SoundState? currentSoundState;
         private AudioPlayerState currentAudioPlayerState;
         private DispatcherTimer timer;
@@ -172,7 +174,7 @@ namespace BatykAudioPlayer.APP.AudioPlayer
             UpdateTime();
         }
 
-        private void OnFilePlaylistManagerError(object sender, FilePlaylistManagerErrorArgs e)
+        private void OnFilePlaylistManagerError(object sender, FileManagerErrorArgs e)
         {
             MessageBox.Show(e.ErrorDetails, "FilePlaylistManager error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
@@ -181,7 +183,7 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         /// Refresh current list of sounds or playlists.
         /// </summary>
         /// <param name="e">Contains information about new list of sounds, and where they should be applied.</param>
-        private void OnFilePlaylistStateChanged (object sender, FilePlaylistManagerEventArgs e)
+        private void OnFilePlaylistStateChanged(object sender, FileManagerEventArgs e)
         {
             if (e.Refreshed == CollectionRefreshed.Sounds)
             {
@@ -267,8 +269,8 @@ namespace BatykAudioPlayer.APP.AudioPlayer
             var dialog = new FolderBrowserDialog();
             dialog.ShowDialog();
             var dirPath = dialog.SelectedPath;
-            filePlaylistManager.FillSoundsFromDirectory(dirPath);
-            filePlaylistManager.SetDefaultDirectory(dirPath);
+            this.fileManager.FillSoundsFromDirectory(dirPath);
+            this.fileManager.SetDefaultDirectory(dirPath);
         }
 
         /// <summary>
@@ -525,7 +527,7 @@ namespace BatykAudioPlayer.APP.AudioPlayer
                     sr.WriteLine(sound.Time);
                 }
             }
-            this.filePlaylistManager.SetDefaultPlaylist(Path.Combine(docPath, SavedPlaylistName));
+            this.fileManager.SetDefaultPlaylist(Path.Combine(docPath, SavedPlaylistName));
             Playlists.Add(new Sound(SavedPlaylistName, Path.Combine(docPath, SavedPlaylistName)));
             RefreshPlaylists(Playlists.ToList());
             SavedPlaylistName = "";
@@ -554,7 +556,7 @@ namespace BatykAudioPlayer.APP.AudioPlayer
                 }
                 RefreshSounds(soundList);
             }
-            this.filePlaylistManager.SetDefaultPlaylist(SelectedPlaylist.Path);
+            this.fileManager.SetDefaultPlaylist(SelectedPlaylist.Path);
             if (this.currentAudioPlayerState == AudioPlayerState.Shuffled)
             {
                 this.notPlayedSounds = Sounds.ToList();
@@ -574,7 +576,7 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         /// 
         /// </summary>
         private void ExecuteDeletePlaylist(object obj)
-        { 
+        {
 
         }
 
@@ -673,16 +675,16 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         /// </summary>
         private void InitializeSoundlistFromDefaultDirectory()
         {
-            if (filePlaylistManager.CheckIfDefaultDirectoryIsSet())
+            if (fileManager.CheckIfDefaultDirectoryIsSet())
             {
-                filePlaylistManager.FillSoundsFromDefaultDirectory();
+                fileManager.FillSoundsFromDefaultDirectory();
             }
             else
             {
-                filePlaylistManager.SetDefaultDirectory(Environment.GetFolderPath(Environment.SpecialFolder.MyMusic));
-                filePlaylistManager.FillSoundsFromDefaultDirectory();               
+                fileManager.SetDefaultDirectory(Environment.GetFolderPath(Environment.SpecialFolder.MyMusic));
+                fileManager.FillSoundsFromDefaultDirectory();
             }
-            filePlaylistManager.FillPlaylistFromDefaultDirectory();
+            fileManager.FillPlaylistFromDefaultDirectory();
         }
 
         /// <summary>
@@ -690,7 +692,7 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         /// </summary>
         private void InitializeSoundlistFromDefaultPlaylist()
         {
-            if (filePlaylistManager.CheckIfDefaultPlaylistIsSet())
+            if (fileManager.CheckIfDefaultPlaylistIsSet())
             {
                 //filePlaylistManager.FillSoundsFromDefaultPlaylist();
             }
@@ -701,15 +703,17 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         /// </summary>
         private void InitializeManagers()
         {
-            this.soundEngine = new SoundEngine();
+            this.soundEngine = new SoundEngineImplementation();
+            this.soundEngine.Initialize();
             this.soundEngine.StateChanged += OnSoundStateChanged;
             this.soundEngine.SoundError += OnSoundError;
             this.soundEngine.MediaEnded += NextSoundRepeatNormal;
             this.currentAudioPlayerState = AudioPlayerState.Normal;
 
-            this.filePlaylistManager = new FilePlaylistManager();
-            this.filePlaylistManager.StateChanged += OnFilePlaylistStateChanged;
-            this.filePlaylistManager.FilePlaylistError += OnFilePlaylistManagerError;
+            this.fileManager = new FileManagerImplementation();
+            this.fileManager.Initialize();
+            this.fileManager.StateChanged += OnFilePlaylistStateChanged;
+            this.fileManager.FilePlaylistError += OnFilePlaylistManagerError;
 
             Sounds = new ObservableCollection<Sound>();
             Playlists = new ObservableCollection<Sound>();

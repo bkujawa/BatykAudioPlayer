@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{D5894E99-9CD3-46ED-8BD7-5AA3386A4775}</ProjectGuid>
+    <ProjectGuid>{7DFC2367-428B-42F7-808A-A57C8E3B5F74}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>BatykAudioPlayer</RootNamespace>
-    <AssemblyName>BatykAudioPlayer</AssemblyName>
+    <RootNamespace>AudioPlayer</RootNamespace>
+    <AssemblyName>AudioPlayer</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -35,11 +35,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="NAudio, Version=1.9.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\NAudio.1.9.0\lib\net35\NAudio.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
@@ -56,29 +52,25 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <ApplicationDefinition Include="APP\App.xaml">
+    <ApplicationDefinition Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="APP\App.xaml.cs">
+    <Page Include="AudioPlayerView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="APP\AudioPlayer\AudioPlayerState.cs" />
-    <Compile Include="APP\AudioPlayer\AudioPlayerView.xaml.cs">
+    <Compile Include="AudioPlayerState.cs" />
+    <Compile Include="AudioPlayerView.xaml.cs">
       <DependentUpon>AudioPlayerView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="APP\AudioPlayer\AudioPlayerViewModel.cs" />
-    <Compile Include="APP\ViewModelBase.cs" />
-    <Compile Include="BL\FilePlaylistManager\FilePlaylistManager.cs" />
-    <Compile Include="BL\FilePlaylistManager\IFilePlaylistManager.cs" />
-    <Compile Include="BL\RelayCommand.cs" />
-    <Compile Include="BL\SoundEngine\ISoundEngine.cs" />
-    <Compile Include="BL\SoundEngine\Sound.cs" />
-    <Compile Include="BL\SoundEngine\SoundEngine.cs" />
-    <Compile Include="BL\SoundEngine\SoundState.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AudioPlayerViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -96,20 +88,39 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="APP\App.config" />
+    <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="APP\AudioPlayer\AudioPlayerView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
+    <ProjectReference Include="..\FileManagerInterface\FileManagerInterface.csproj">
+      <Project>{8008dd14-ab3b-4878-b478-21853f94eb83}</Project>
+      <Name>FileManagerInterface</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FileManager\FileManager.csproj">
+      <Project>{60a15899-cd6f-4765-80de-f3010a764b8e}</Project>
+      <Name>FileManager</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RelayCommand\RelayCommand.csproj">
+      <Project>{1aec2235-359e-40d0-8541-ea485a9f2de3}</Project>
+      <Name>RelayCommand</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SoundEngineInterface\SoundEngineInterface.csproj">
+      <Project>{b64458ce-5a92-46dc-8af8-aae72c290585}</Project>
+      <Name>SoundEngineInterface</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SoundEngine\SoundEngine.csproj">
+      <Project>{0b0ab727-b48f-415f-a046-e19eeb1b3cb3}</Project>
+      <Name>SoundEngine</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ViewModelBase\ViewModelBase.csproj">
+      <Project>{3292fd32-2a5d-4e13-b26c-8914b46878a4}</Project>
+      <Name>ViewModelBase</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
