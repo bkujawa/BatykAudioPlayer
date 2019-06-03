@@ -9,7 +9,7 @@
         MinHeight="450"
         MinWidth="800"
         >
-    <Grid Margin="0" ShowGridLines="True">
+    <Grid Margin="0" ShowGridLines="False">
         <Grid.RowDefinitions>
             <RowDefinition Height="20" />
             <RowDefinition Height="Auto" />
