@@ -17,7 +17,7 @@
             <RowDefinition Height="20" />
             <RowDefinition Height="Auto" />
             <RowDefinition />
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height="20" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition MinWidth="200" />
@@ -124,22 +124,22 @@
                     HorizontalAlignment="Right"
                     Orientation="Horizontal"
                     >
-            <TextBlock FontSize="20"
+            <TextBlock FontSize="14"
                        FontWeight="Bold"
                        Text="Playlists"
                        />
             <Button Command="{Binding SavePlaylist}"
                     Content="Save"
-                    Style="{StaticResource ButtonStyle}"
+                    Style="{StaticResource MenuButtonStyle}"
                     />
             <TextBox MinWidth="80" Text="{Binding SavedPlaylistName}" />
             <Button Command="{Binding OpenPlaylist}"
                     Content="Open"
-                    Style="{StaticResource ButtonStyle}"
+                    Style="{StaticResource MenuButtonStyle}"
                     />
             <Button Command="{Binding DeletePlaylist}"
                     Content="Delete"
-                    Style="{StaticResource ButtonStyle}"
+                    Style="{StaticResource MenuButtonStyle}"
                     />
         </StackPanel>
 

@@ -11,15 +11,22 @@
             <Setter Property="FontWeight" Value="Bold" />
             <Setter Property="FontSize" Value="18" />
         </Style>
+        <!--Work with this style to show time of sound on right edge of grid-->
         <Style x:Key="SoundListStyle" TargetType="{x:Type ListBox}">
+
             <Setter Property="ItemTemplate">
                 <Setter.Value>
                     <DataTemplate DataType="{x:Type ListBox}">
-                        <Grid Background="Transparent" ToolTip="{Binding Path}">
+                        <Grid ShowGridLines="True" Background="Transparent" ToolTip="{Binding Path}" 
+                              Width="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType={x:Type Grid}, Mode=FindAncestor}}">
                             <TextBlock HorizontalAlignment="Left"
                                        FontSize="20"
                                        Text="{Binding Name}"
                                        />
+                            <TextBlock HorizontalAlignment="Right"
+                                       Margin="0,0,6,0"
+                                       Text="{Binding Time}"
+                                       FontSize="20"/>
                         </Grid>
                     </DataTemplate>
                 </Setter.Value>
