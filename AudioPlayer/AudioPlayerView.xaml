@@ -9,7 +9,7 @@
         MinHeight="450"
         MinWidth="800"
         >
-    <Grid Margin="0" ShowGridLines="False">
+    <Grid Margin="0" ShowGridLines="False" Background="Black">
         <Grid.RowDefinitions>
             <RowDefinition Height="20" />
             <RowDefinition Height="Auto" />
@@ -38,56 +38,57 @@
                     >
             <Button Command="{Binding Play}"
                     Content="Play"
-                    Style="{StaticResource ButtonStyle}"
+                    Style="{StaticResource RoundedButtonStyle}"
                     />
             <Button Command="{Binding Pause}"
                     Content="Pause"
-                    Style="{StaticResource ButtonStyle}"
+                    Style="{StaticResource RoundedButtonStyle}"
                     />
             <Button Command="{Binding Stop}"
                     Content="Stop"
-                    Style="{StaticResource ButtonStyle}"
+                    Style="{StaticResource RoundedButtonStyle}"
                     />
             <Button Command="{Binding PlayPrevious}"
                     Content="Previous"
-                    Style="{StaticResource ButtonStyle}"
+                    Style="{StaticResource RoundedButtonStyle}"
                     />
             <Button Command="{Binding PlayNext}"
                     Content="Next"
-                    Style="{StaticResource ButtonStyle}"
+                    Style="{StaticResource RoundedButtonStyle}"
                     />
             <Button Command="{Binding VolumeUp}"
                     Content="Volume +"
-                    Style="{StaticResource ButtonStyle}"
+                    Style="{StaticResource RoundedButtonStyle}"
                     />
             <Button Command="{Binding VolumeDown}"
                     Content="Volume -"
-                    Style="{StaticResource ButtonStyle}"
+                    Style="{StaticResource RoundedButtonStyle}"
                     />
             <Button Command="{Binding VolumeMute}"
                     Content="{Binding Mute}"
-                    Style="{StaticResource ButtonStyle}"
+                    Style="{StaticResource RoundedButtonStyle}"
                     />
             <Button Command="{Binding RepeatShuffle}"
                     Content="Shuffle"
-                    Style="{StaticResource ButtonStyle}"
+                    Style="{StaticResource RoundedButtonStyle}"
                     />
             <Button Command="{Binding RepeatSound}"
                     Content="Repeat"
-                    Style="{StaticResource ButtonStyle}"
+                    Style="{StaticResource RoundedButtonStyle}"
                     />
             <Button Command="{Binding RepeatPlaylist}"
                     Content="Repeat playlist"
-                    Style="{StaticResource ButtonStyle}"
+                    Style="{StaticResource RoundedButtonStyle}"
                     />
             <Button Command="{Binding RepeatNormal}"
                     Content="Normal"
-                    Style="{StaticResource ButtonStyle}"
+                    Style="{StaticResource RoundedButtonStyle}"
                     />
         </StackPanel>
 
         <ProgressBar Grid.ColumnSpan="3"
                      Grid.Row="4"
+                     Background="Black"
                      Height="20"
                      Maximum="100"
                      Value="{Binding Progress}"
@@ -97,6 +98,7 @@
                    Grid.Row="4"
                    HorizontalAlignment="Center"
                    VerticalAlignment="Center"
+                   Foreground="White"
                    Text="{Binding TimeInfo}"
                    />
 
@@ -107,6 +109,7 @@
                  />
 
         <GridSplitter Grid.Column="1"
+                      Background="Black"
                       Grid.Row="5"
                       Width="4"
                       HorizontalAlignment="Center"

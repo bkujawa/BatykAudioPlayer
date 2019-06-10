@@ -7,36 +7,95 @@
     <Application.Resources>
         <Style x:Key="ButtonStyle" TargetType="{x:Type Button}">
             <Setter Property="Height" Value="30" />
-            <Setter Property="Margin" Value="0,0,1,0" />
+            <Setter Property="Margin" Value="0,0,6,0" />
             <Setter Property="FontWeight" Value="Bold" />
             <Setter Property="FontSize" Value="18" />
+            <Setter Property="Background" Value="Black"/>
+            <Setter Property="Foreground" Value="White"/>
         </Style>
+        
         <!--Work with this style to show time of sound on right edge of grid-->
         <Style x:Key="SoundListStyle" TargetType="{x:Type ListBox}">
-
+            <Setter Property="Background" Value="Black"/>
             <Setter Property="ItemTemplate">
                 <Setter.Value>
                     <DataTemplate DataType="{x:Type ListBox}">
-                        <Grid ShowGridLines="True" Background="Transparent" ToolTip="{Binding Path}" 
-                              Width="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType={x:Type Grid}, Mode=FindAncestor}}">
-                            <TextBlock HorizontalAlignment="Left"
+                        <Grid ShowGridLines="True" Background="{Binding Background, RelativeSource={RelativeSource AncestorType={x:Type ListBox},Mode=FindAncestor}}" ToolTip="{Binding Path}" 
+                              Width="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType={x:Type VirtualizingStackPanel}, Mode=FindAncestor}}" 
+                             
+                              >
+                            <TextBlock HorizontalAlignment="Center"
                                        FontSize="20"
+                                       Foreground="White"
                                        Text="{Binding Name}"
-                                       />
-                            <TextBlock HorizontalAlignment="Right"
-                                       Margin="0,0,6,0"
+                                       
+                                       >
+                            </TextBlock>
+                            <TextBlock HorizontalAlignment="Left"
+                                       Margin="0, 0, 0, 0"
+                                       Foreground="White"
                                        Text="{Binding Time}"
                                        FontSize="20"/>
+
                         </Grid>
+                        <!-- <DockPanel HorizontalAlignment="Stretch" Width="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType={x:Type VirtualizingStackPanel}, Mode=FindAncestor}}">
+                            <TextBlock DockPanel.Dock="Left"
+                                       FontSize="20"
+                                       Text="{Binding Name}"/>
+                            <TextBlock DockPanel.Dock="Right"
+                                       FontSize="20"
+                                       Text="{Binding Time}"/>
+                        </DockPanel> -->
                     </DataTemplate>
                 </Setter.Value>
             </Setter>
+            <Style.Triggers>
+                <Trigger Property="SelectedItem" Value="True">
+                    <Setter Property="Background" Value="Gray"/>
+                </Trigger>
+            </Style.Triggers>
         </Style>
+
         <Style x:Key="MenuButtonStyle" TargetType="{x:Type Button}">
             <Setter Property="Height" Value="20" />
             <Setter Property="Margin" Value="0,0,0,0" />
             <Setter Property="FontWeight" Value="Light" />
             <Setter Property="FontSize" Value="11" />
         </Style>
+
+        <Style x:Key="RoundedButtonStyle" TargetType="{x:Type Button}" BasedOn="{StaticResource ButtonStyle}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border>
+                            <Border.Style>
+                                <Style TargetType="{x:Type Border}">
+                                    <Setter Property="CornerRadius" Value="15"/>
+                                    <Setter Property="BorderThickness" Value="2"/>
+                                    <Setter Property="Padding" Value="2"/>
+                                    <Setter Property="BorderBrush" Value="White"/>
+                                    <Style.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="BorderBrush" Value="Red"/>
+                                        </Trigger>
+                                        <Trigger Property="IsEnabled" Value="False">
+                                            <Setter Property="Background" Value="Red"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseCaptureWithin" Value="True">
+                    <Setter Property="BorderBrush" Value="Black"/>
+                </Trigger>
+                
+            </Style.Triggers>
+        </Style>
+
     </Application.Resources>
 </Application>
