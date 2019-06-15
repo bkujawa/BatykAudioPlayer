@@ -155,7 +155,7 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         public AudioPlayerViewModel()
         {
             InitializeManagers();
-            InitializeSoundlistFromDefaultDirectory();
+            InitializeSoundlistFromDefaultPlaylist();
             RegisterCommands();
         }
 
@@ -538,7 +538,7 @@ namespace BatykAudioPlayer.APP.AudioPlayer
                     sr.WriteLine(sound.Time);
                 }
             }
-            this.fileManager.SetDefaultPlaylist(Path.Combine(docPath, SavedPlaylistName));
+            this.fileManager.SetDefaultPlaylist(Path.Combine(docPath, SavedPlaylistName) + ".txt");
             Playlists.Add(new Sound(SavedPlaylistName, Path.Combine(docPath, SavedPlaylistName)));
             RefreshPlaylists(Playlists.ToList());
             SavedPlaylistName = "";
@@ -557,16 +557,7 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         /// </summary>
         private void ExecuteOpenPlaylist(object obj)
         {
-            if (!string.IsNullOrEmpty(SelectedPlaylist.Path))
-            {
-                var soundList = new List<Sound>();
-                var allFiles = File.ReadAllLines(SelectedPlaylist.Path);
-                for (int i = 0; i < allFiles.Length - 1; i = i + 3)
-                {
-                    soundList.Add(new Sound(allFiles[i], allFiles[i + 1], allFiles[i + 2]));
-                }
-                RefreshSounds(soundList);
-            }
+            this.fileManager.FillSoundsFromPlaylist(SelectedPlaylist.Path);
             this.fileManager.SetDefaultPlaylist(SelectedPlaylist.Path);
             if (this.currentAudioPlayerState == AudioPlayerState.Shuffled)
             {
@@ -692,10 +683,10 @@ namespace BatykAudioPlayer.APP.AudioPlayer
             }
             else
             {
-                fileManager.SetDefaultDirectory(Environment.GetFolderPath(Environment.SpecialFolder.MyMusic));
-                fileManager.FillSoundsFromDefaultDirectory();
+                this.fileManager.SetDefaultDirectory(Environment.GetFolderPath(Environment.SpecialFolder.MyMusic));
+                this.fileManager.FillSoundsFromDefaultDirectory();
             }
-            fileManager.FillPlaylistFromDefaultDirectory();
+            this.fileManager.FillPlaylistFromDefaultDirectory();
         }
 
         /// <summary>
@@ -703,9 +694,14 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         /// </summary>
         private void InitializeSoundlistFromDefaultPlaylist()
         {
-            if (fileManager.CheckIfDefaultPlaylistIsSet())
+            if (this.fileManager.CheckIfDefaultPlaylistIsSet())
             {
-                //filePlaylistManager.FillSoundsFromDefaultPlaylist();
+                this.fileManager.FillSoundsFromDefaultPlaylist();
+                this.fileManager.FillPlaylistFromDefaultDirectory();
+            }
+            else
+            {
+                InitializeSoundlistFromDefaultDirectory();
             }
         }
 

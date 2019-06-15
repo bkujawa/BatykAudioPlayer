@@ -19,7 +19,7 @@ namespace BatykAudioPlayer.BL.SoundEngine
 
         #endregion
 
-        #region Properties
+        #region Public properties
 
         /// <summary>
         /// Represents current volume of sound engine. 
@@ -44,7 +44,8 @@ namespace BatykAudioPlayer.BL.SoundEngine
         }
 
         /// <summary>
-        /// Event handler used for MediaEnded event. Releases previous event before adds new event. No reason to explicitly remove events.
+        /// Event handler used for MediaEnded event. 
+        /// Releases previous event before adds new event. No reason to explicitly remove events.
         /// </summary>
         public event EventHandler MediaEnded
         {
@@ -92,6 +93,10 @@ namespace BatykAudioPlayer.BL.SoundEngine
 
         #region ISoundEngine implementation
 
+        /// <summary>
+        /// Plays sound pointed by path.
+        /// </summary>
+        /// <param name="path">String with windows-type path to sound file.</param>
         public void Play(string path)
         {
             try
@@ -118,6 +123,9 @@ namespace BatykAudioPlayer.BL.SoundEngine
             }
         }
 
+        /// <summary>
+        /// Pause.
+        /// </summary>
         public void Pause()
         {
             try
@@ -132,6 +140,9 @@ namespace BatykAudioPlayer.BL.SoundEngine
             }
         }
 
+        /// <summary>
+        /// Stop. 
+        /// </summary>
         public void Stop()
         {
             try
@@ -146,6 +157,9 @@ namespace BatykAudioPlayer.BL.SoundEngine
             }
         }
 
+        /// <summary>
+        /// Either mutes or unmutes MediaPlayer, depending on previous value.
+        /// </summary>
         public void VolumeMute()
         {
             if (this.mediaPlayer.IsMuted)
@@ -158,6 +172,10 @@ namespace BatykAudioPlayer.BL.SoundEngine
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public Tuple<TimeSpan, TimeSpan> GetTimePosition()
         {
             if (this.currentState == null || this.currentState == SoundState.Unknown || this.currentState == SoundState.Stopped)
@@ -171,6 +189,10 @@ namespace BatykAudioPlayer.BL.SoundEngine
             return null;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public double GetFilePosition()
         {
             if (this.currentState == null || this.currentState == SoundState.Unknown || this.currentState == SoundState.Stopped)
@@ -184,6 +206,9 @@ namespace BatykAudioPlayer.BL.SoundEngine
             return 0;
         }
 
+        /// <summary>
+        /// Creates instance of MediaPlayer and sets volume.
+        /// </summary>
         public void Initialize()
         {
             this.mediaPlayer = new MediaPlayer();

@@ -12,23 +12,23 @@ namespace BatykAudioPlayer.BL.SoundEngineInterface
     public interface ISoundEngine
     {
         /// <summary>
-        /// 
+        /// Play sound pointed by path.
         /// </summary>
-        /// <param name="path"></param>
+        /// <param name="path">String with windows-type path to sound file.</param>
         void Play(string path);
 
         /// <summary>
-        /// 
+        /// Stop.
         /// </summary>
         void Stop();
 
         /// <summary>
-        /// 
+        /// Pause.
         /// </summary>
         void Pause();
 
         /// <summary>
-        /// 
+        /// Either mutes or unmutes sound, depending on previous value.
         /// </summary>
         void VolumeMute();
 

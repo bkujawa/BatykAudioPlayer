@@ -18,13 +18,19 @@ namespace BatykAudioPlayer.BL.FileManagerInterface
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="playlistPath"></param>
+        void FillSoundsFromPlaylist(string playlistPath);
+        /// <summary>
+        /// 
+        /// </summary>
         /// <returns></returns>
         void FillSoundsFromDefaultDirectory();
 
         /// <summary>
         /// 
         /// </summary>
-        List<Sound> FillPlaylist();
+        void FillSoundsFromDefaultPlaylist();
+
 
         /// <summary>
         /// Fills <see cref="BatykAudioPlayer.APP.AudioPlayer.AudioPlayerViewModel.Playlists"/> with files found in default directory.
@@ -72,6 +78,9 @@ namespace BatykAudioPlayer.BL.FileManagerInterface
         void Initialize();
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public class FileManagerEventArgs : EventArgs
     {
         public List<Sound> NewSounds { get; private set; }
@@ -83,6 +92,9 @@ namespace BatykAudioPlayer.BL.FileManagerInterface
         }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public class FileManagerErrorArgs
     {
         public string ErrorDetails { get; private set; }

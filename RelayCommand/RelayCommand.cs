@@ -8,6 +8,10 @@ using System.Windows.Input;
 
 namespace BatykAudioPlayer.BL.RelayCommand
 {
+    /// <summary>
+    /// Implementation of ICommand interface.
+    /// Provides Action and Predicate delegates for execute and canexecute methods.
+    /// </summary>
     public class RelayCommand : ICommand
     {
         // Fields
@@ -32,11 +36,18 @@ namespace BatykAudioPlayer.BL.RelayCommand
             return _canExecute == null ? true : _canExecute(parameter);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="parameter"></param>
         public void Execute(object parameter)
         {
             _execute(parameter);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public event EventHandler CanExecuteChanged
         {
             add { CommandManager.RequerySuggested += value; }

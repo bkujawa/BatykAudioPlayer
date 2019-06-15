@@ -44,22 +44,6 @@ namespace BatykAudioPlayer.BL.FileManager
 
         #region IFilePlaylistManager implementation
 
-        public List<Sound> FillPlaylist()
-        {
-            string docPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "AudioPlayer");
-            var playlists = new List<Sound>();
-            var allFiles = Directory.GetFiles(docPath);
-            foreach (var file in allFiles)
-            {
-                var pathExtension = Path.GetExtension(file);
-                if (pathExtension?.ToUpper() == ".TXT")
-                {
-                    //playlists.Add(new Sound(Path.GetFileNameWithoutExtension(file), file));
-                }
-            }
-            return playlists;
-        }
-
         public void FillPlaylistFromDefaultDirectory()
         {
             string docPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "AudioPlayer");
@@ -140,6 +124,31 @@ namespace BatykAudioPlayer.BL.FileManager
             }
         }
 
+        public void FillSoundsFromPlaylist(string playlistPath)
+        {
+            if (!string.IsNullOrEmpty(playlistPath))
+            {
+                var soundList = new List<Sound>();
+                var allFiles = File.ReadAllLines(playlistPath);
+                for (int i = 0; i < allFiles.Length - 1; i = i + 3)
+                {
+                    soundList.Add(new Sound(allFiles[i], allFiles[i + 1], allFiles[i + 2]));
+                }
+                if (soundList.Any())
+                {
+                    OnStateChanged(new FileManagerEventArgs(soundList));
+                }
+            }
+        }
+
+        public void FillSoundsFromDefaultPlaylist()
+        {
+            if (!string.IsNullOrEmpty(defaultPlaylist))
+            {
+                FillSoundsFromPlaylist(defaultPlaylist);
+            }
+        }
+
         public void SetDefaultDirectory(string dirPath)
         {
             if (!string.IsNullOrEmpty(dirPath))
@@ -206,6 +215,10 @@ namespace BatykAudioPlayer.BL.FileManager
 
         #region Private helpers
 
+        /// <summary>
+        /// Searches through configuration file to find default directory. Returns null if there is no default directory, otherwise returns path to default directory.
+        /// </summary>
+        /// <returns></returns>
         private string ReturnDefaultDirectoryFromConfig()
         {
             var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
@@ -217,6 +230,10 @@ namespace BatykAudioPlayer.BL.FileManager
             return directory;
         }
 
+        /// <summary>
+        /// Searches through configuration file to find default playlist. Returns null if there is no default playlist, otherwise returns path to default playlist.
+        /// </summary>
+        /// <returns></returns>
         private string ReturnDefaultPlaylistFromConfig()
         {
             var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);

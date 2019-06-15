@@ -99,6 +99,7 @@
                    HorizontalAlignment="Center"
                    VerticalAlignment="Center"
                    Foreground="White"
+                   FontSize="15"
                    Text="{Binding TimeInfo}"
                    />
 
