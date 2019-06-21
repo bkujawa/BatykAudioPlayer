@@ -120,7 +120,8 @@
 
         <TextBlock Grid.Row="6"
                    HorizontalAlignment="Left"
-                   Text="{Binding CurrentSound}"
+                   Foreground="White"
+                   Text="{Binding CurrentSound.Name}"
                    />
 
         <StackPanel Grid.ColumnSpan="3"
@@ -130,6 +131,7 @@
                     >
             <TextBlock FontSize="14"
                        FontWeight="Bold"
+                       Foreground="White"
                        Text="Playlists"
                        />
             <Button Command="{Binding SavePlaylist}"

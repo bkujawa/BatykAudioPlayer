@@ -18,13 +18,15 @@ namespace BatykAudioPlayer.BL.FileManager
 
         private string defaultDirectory;
         private string defaultPlaylist;
+        private List<Sound> soundlist = new List<Sound>();
+        private List<Sound> playlist = new List<Sound>();
 
         #endregion
 
         #region Event handlers
 
         public event EventHandler<FileManagerEventArgs> StateChanged;
-        public event EventHandler<FileManagerErrorArgs> FilePlaylistError;
+        public event EventHandler<FileManagerErrorArgs> FileManagerError;
 
         #endregion
 
@@ -37,7 +39,7 @@ namespace BatykAudioPlayer.BL.FileManager
 
         private void OnError(string error)
         {
-            FilePlaylistError?.Invoke(this, new FileManagerErrorArgs(error));
+            FileManagerError?.Invoke(this, new FileManagerErrorArgs(error));
         }
 
         #endregion
@@ -47,7 +49,7 @@ namespace BatykAudioPlayer.BL.FileManager
         public void FillPlaylistFromDefaultDirectory()
         {
             string docPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "AudioPlayer");
-            var playLists = new List<Sound>();
+            playlist.Clear();
             try
             {
                 var allFiles = Directory.GetFiles(docPath);
@@ -56,26 +58,27 @@ namespace BatykAudioPlayer.BL.FileManager
                     var pathExtension = Path.GetExtension(file);
                     if (pathExtension?.ToUpper() == ".TXT")
                     {
-                        playLists.Add(new Sound(Path.GetFileNameWithoutExtension(file), file, null));
+                        playlist.Add(new Sound(Path.GetFileNameWithoutExtension(file), file, null));
                     }
                 }
             }
             catch (Exception ex)
             {
                 OnStateChanged(new FileManagerEventArgs(null, CollectionRefreshed.Playlists));
+                OnError("FillplaylistFromDefaultDirectory error.");
             }
-            OnStateChanged(new FileManagerEventArgs(playLists, CollectionRefreshed.Playlists));
+            OnStateChanged(new FileManagerEventArgs(playlist, CollectionRefreshed.Playlists));
         }
 
         public void FillSoundsFromDirectory(string dirPath)
         {
             if (!string.IsNullOrEmpty(dirPath))
             {
-                var soundList = new List<Sound>();
-                FillSoundsFromDirectoryRecursive(dirPath, ref soundList);
-                if (soundList.Any())
+                soundlist.Clear();
+                FillSoundsFromDirectoryRecursive(dirPath);
+                if (soundlist.Any())
                 {
-                    OnStateChanged(new FileManagerEventArgs(soundList));
+                    OnStateChanged(new FileManagerEventArgs(soundlist));
                 }
             }
             else
@@ -85,20 +88,27 @@ namespace BatykAudioPlayer.BL.FileManager
             }
         }
 
-        private void FillSoundsFromDirectoryRecursive(string dirPath, ref List<Sound> soundList)
+        private void FillSoundsFromDirectoryRecursive(string dirPath)
         {
             // TODO: Make searching for files faster, nonblocking, multithreading.
-            //allFiles.ToList().ForEach(file =>
-            //{
-            //    var pathExtension = Path.GetExtension(file);
-            //    if (pathExtension?.ToUpper() == ".MP3")
-            //    {
-            //        Mp3FileReader reader = new Mp3FileReader(file);
-            //        TimeSpan duration = reader.TotalTime;
-            //        soundList.Add(new Sound(Path.GetFileNameWithoutExtension(file), file, duration.ToString(@"hh\:mm\:ss")));
-            //    }
-            //});
             var allFiles = Directory.GetFiles(dirPath);
+            allFiles.ToList().ForEach(file =>
+            {
+                var pathExtension = Path.GetExtension(file);
+                if (pathExtension?.ToUpper() == ".MP3")
+                {
+                    Mp3FileReader reader = new Mp3FileReader(file);
+                    TimeSpan duration = reader.TotalTime;
+                    soundlist.Add(new Sound(Path.GetFileNameWithoutExtension(file), file, duration.ToString(@"hh\:mm\:ss")));
+                }
+            });
+            var allDirectories = Directory.GetDirectories(dirPath);
+            allDirectories.ToList().ForEach(dir =>
+            {
+                FillSoundsFromDirectoryRecursive(dir);
+            });
+
+            /*
             foreach (var file in allFiles)
             {
                 var pathExtension = Path.GetExtension(file);
@@ -108,12 +118,12 @@ namespace BatykAudioPlayer.BL.FileManager
                     TimeSpan duration = reader.TotalTime;
                     soundList.Add(new Sound(Path.GetFileNameWithoutExtension(file), file, duration.ToString(@"hh\:mm\:ss")));
                 }
-            }
+            } 
             var allDirectories = Directory.GetDirectories(dirPath);
             foreach (var directory in allDirectories)
             {
-                FillSoundsFromDirectoryRecursive(directory, ref soundList);
-            }
+                FillSoundsFromDirectoryRecursive(directory);
+            } */
         }
 
         public void FillSoundsFromDefaultDirectory()
@@ -128,15 +138,15 @@ namespace BatykAudioPlayer.BL.FileManager
         {
             if (!string.IsNullOrEmpty(playlistPath))
             {
-                var soundList = new List<Sound>();
+                soundlist.Clear();
                 var allFiles = File.ReadAllLines(playlistPath);
                 for (int i = 0; i < allFiles.Length - 1; i = i + 3)
                 {
-                    soundList.Add(new Sound(allFiles[i], allFiles[i + 1], allFiles[i + 2]));
+                    soundlist.Add(new Sound(allFiles[i], allFiles[i + 1], allFiles[i + 2]));
                 }
-                if (soundList.Any())
+                if (soundlist.Any())
                 {
-                    OnStateChanged(new FileManagerEventArgs(soundList));
+                    OnStateChanged(new FileManagerEventArgs(soundlist));
                 }
             }
         }
@@ -162,7 +172,6 @@ namespace BatykAudioPlayer.BL.FileManager
                 {
                     config.AppSettings.Settings.Add(new KeyValueConfigurationElement("DirPath", dirPath));
                 }
-                ConfigurationManager.AppSettings["DirPath"] = dirPath;
                 config.Save(ConfigurationSaveMode.Full);
                 this.defaultDirectory = dirPath;
             }
@@ -173,7 +182,7 @@ namespace BatykAudioPlayer.BL.FileManager
             if (!string.IsNullOrEmpty(dirPath))
             {
                 var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-                if (config.AppSettings.Settings["PlaylistPath"] != null)
+                if (config?.AppSettings.Settings["PlaylistPath"] != null)
                 {
                     config.AppSettings.Settings["PlaylistPath"].Value = dirPath;
                 }
@@ -181,7 +190,6 @@ namespace BatykAudioPlayer.BL.FileManager
                 {
                     config.AppSettings.Settings.Add(new KeyValueConfigurationElement("PlaylistPath", dirPath));
                 }
-                ConfigurationManager.AppSettings["PlaylistPath"] = dirPath;
                 config.Save(ConfigurationSaveMode.Full);
                 this.defaultPlaylist = dirPath;
             }
@@ -209,6 +217,8 @@ namespace BatykAudioPlayer.BL.FileManager
         {
             defaultDirectory = ReturnDefaultDirectoryFromConfig();
             defaultPlaylist = ReturnDefaultPlaylistFromConfig();
+            soundlist = new List<Sound>();
+            playlist = new List<Sound>();
         }
 
         #endregion
