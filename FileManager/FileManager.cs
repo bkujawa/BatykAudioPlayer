@@ -58,7 +58,11 @@ namespace BatykAudioPlayer.BL.FileManager
                     var pathExtension = Path.GetExtension(file);
                     if (pathExtension?.ToUpper() == ".TXT")
                     {
-                        playlist.Add(new Sound(Path.GetFileNameWithoutExtension(file), file, null));
+                        playlist.Add(new Sound()
+                        {
+                            Name = Path.GetFileNameWithoutExtension(file),
+                            Path = file
+                        });
                     }
                 }
             }
@@ -99,7 +103,12 @@ namespace BatykAudioPlayer.BL.FileManager
                 {
                     Mp3FileReader reader = new Mp3FileReader(file);
                     TimeSpan duration = reader.TotalTime;
-                    soundlist.Add(new Sound(Path.GetFileNameWithoutExtension(file), file, duration.ToString(@"hh\:mm\:ss")));
+                    soundlist.Add(new Sound()
+                    {
+                        Name = Path.GetFileNameWithoutExtension(file),
+                        Path = file,
+                        Time = duration.ToString(@"hh\:mm\:ss")
+                    });
                 }
             });
             var allDirectories = Directory.GetDirectories(dirPath);
@@ -142,7 +151,12 @@ namespace BatykAudioPlayer.BL.FileManager
                 var allFiles = File.ReadAllLines(playlistPath);
                 for (int i = 0; i < allFiles.Length - 1; i = i + 3)
                 {
-                    soundlist.Add(new Sound(allFiles[i], allFiles[i + 1], allFiles[i + 2]));
+                    soundlist.Add(new Sound()
+                    {
+                        Name = allFiles[i],
+                        Path = allFiles[i + 1],
+                        Time = allFiles[i + 2]
+                    });
                 }
                 if (soundlist.Any())
                 {

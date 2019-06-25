@@ -20,8 +20,7 @@ namespace BatykAudioPlayer.APP.AudioPlayer
     class AudioPlayerViewModel : ViewModelBase
     {
         #region Private fields
-
-        private ISoundEngine soundEngine;
+        
         private IFileManager fileManager;
         private SoundState? currentSoundState;
         private AudioPlayerState currentAudioPlayerState;
@@ -226,7 +225,7 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         /// </summary>
         private void ExecutePlay(object obj)
         {
-            this.soundEngine.Play(SelectedSound.Path);
+            SoundEngine.Play(SelectedSound.Path);
             CurrentSound = SelectedSound;
             if (this.currentAudioPlayerState == AudioPlayerState.Shuffled)
             {
@@ -247,7 +246,7 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         /// </summary>
         private void ExecutePause(object obj)
         {
-            this.soundEngine.Pause();
+            SoundEngine.Pause();
         }
 
         /// <summary>
@@ -263,7 +262,7 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         /// </summary>
         private void ExecuteStop(object obj)
         {
-            this.soundEngine.Stop();
+            SoundEngine.Stop();
         }
 
         /// <summary>
@@ -310,7 +309,7 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         {
             if (this.currentSoundState == SoundState.Playing || this.currentSoundState == SoundState.Paused)
             {
-                this.soundEngine.Stop();
+                SoundEngine.Stop();
             }
             if (this.currentSoundState == SoundState.Unknown)
             {
@@ -366,7 +365,7 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         {
             if (this.currentSoundState == SoundState.Playing || this.currentSoundState == SoundState.Paused)
             {
-                this.soundEngine.Stop();
+                SoundEngine.Stop();
             }
             if (this.currentAudioPlayerState == AudioPlayerState.Shuffled)
             {
@@ -390,7 +389,7 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         /// </summary>
         private bool CanExecuteVolumeUp(object obj)
         {
-            if (this.soundEngine.Volume < 1)
+            if (SoundEngine.Volume < 1)
             {
                 return true;
             }
@@ -402,7 +401,7 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         /// </summary>
         private void ExecuteVolumeUp(object obj)
         {
-            this.soundEngine.Volume += 0.1;
+            SoundEngine.Volume += 0.1;
         }
 
         /// <summary>
@@ -410,7 +409,7 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         /// </summary>
         private bool CanExecuteVolumeDown(object obj)
         {
-            if (this.soundEngine.Volume > 0)
+            if (SoundEngine.Volume > 0)
             {
                 return true;
             }
@@ -422,7 +421,7 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         /// </summary>
         private void ExecuteVolumeDown(object obj)
         {
-            soundEngine.Volume -= 0.1;
+            SoundEngine.Volume -= 0.1;
         }
 
         /// <summary>
@@ -438,7 +437,7 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         /// </summary>
         private void ExecuteVolumeMute(object obj)
         {
-            this.soundEngine.VolumeMute();
+            SoundEngine.VolumeMute();
             if (Mute.Equals("Mute"))
             {
                 Mute = "Unmute";
@@ -556,7 +555,12 @@ namespace BatykAudioPlayer.APP.AudioPlayer
                 }
             }
             this.fileManager.SetDefaultPlaylist(Path.Combine(docPath, SavedPlaylistName) + ".txt");
-            Playlists.Add(new Sound(SavedPlaylistName, Path.Combine(docPath, SavedPlaylistName)));
+            Playlists.Add(new Sound()
+            {
+                Name = SavedPlaylistName,
+                Path = Path.Combine(docPath, SavedPlaylistName)
+            } 
+            );
             RefreshPlaylists(Playlists.ToList());
             SavedPlaylistName = "";
         }
@@ -640,7 +644,7 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         /// </summary>
         private void UpdateTime()
         {
-            var time = soundEngine.GetTimePosition();
+            var time = SoundEngine.GetTimePosition();
             if (time == null)
             {
                 TimeInfo = "--/--";
@@ -656,7 +660,7 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         /// </summary>
         private void UpdateProgress()
         {
-            Progress = this.soundEngine.GetFilePosition();
+            Progress = SoundEngine.GetFilePosition();
         }
 
         /// <summary>
@@ -727,11 +731,10 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         /// </summary>
         private void InitializeManagers()
         {
-            this.soundEngine = new SoundEngineImplementation();
-            this.soundEngine.Initialize();
-            this.soundEngine.StateChanged += OnSoundStateChanged;
-            this.soundEngine.SoundError += OnSoundError;
-            this.soundEngine.MediaEnded += NextSoundRepeatNormal;
+            SoundEngine.Initialize();
+            SoundEngine.StateChanged += OnSoundStateChanged;
+            SoundEngine.SoundError += OnSoundError;
+            SoundEngine.MediaEnded += NextSoundRepeatNormal;
             this.currentAudioPlayerState = AudioPlayerState.Normal;
 
             this.fileManager = new FileManagerImplementation();
@@ -763,9 +766,9 @@ namespace BatykAudioPlayer.APP.AudioPlayer
                 CurrentSound = SelectedSound;
                 if (this.currentSoundState == SoundState.Playing || this.currentSoundState == SoundState.Paused)
                 {
-                    this.soundEngine.Stop();
+                    SoundEngine.Stop();
                 }
-                this.soundEngine.Play(CurrentSound.Path);
+                SoundEngine.Play(CurrentSound.Path);
             }
         }
 
@@ -778,9 +781,9 @@ namespace BatykAudioPlayer.APP.AudioPlayer
                 CurrentSound = SelectedSound;
                 if (this.currentSoundState == SoundState.Playing || this.currentSoundState == SoundState.Paused)
                 {
-                    this.soundEngine.Stop();
+                    SoundEngine.Stop();
                 }
-                this.soundEngine.Play(CurrentSound.Path);
+                SoundEngine.Play(CurrentSound.Path);
             }
         }
 
@@ -795,9 +798,9 @@ namespace BatykAudioPlayer.APP.AudioPlayer
             SelectedSound = CurrentSound;
             if (this.currentSoundState == SoundState.Playing || this.currentSoundState == SoundState.Paused)
             {
-                this.soundEngine.Stop();
+                SoundEngine.Stop();
             }
-            this.soundEngine.Play(CurrentSound.Path);
+            SoundEngine.Play(CurrentSound.Path);
             notPlayedSounds.Remove(CurrentSound);
         }
 
@@ -805,28 +808,28 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         {
             if (this.currentSoundState == SoundState.Playing || this.currentSoundState == SoundState.Paused)
             {
-                this.soundEngine.Stop();
+                SoundEngine.Stop();
             }
-            this.soundEngine.Play(CurrentSound.Path);
+            SoundEngine.Play(CurrentSound.Path);
         }
 
         private void NextSoundRepeatPlaylist(object sender, EventArgs e)
         {
             if (this.currentSoundState == SoundState.Playing || this.currentSoundState == SoundState.Paused)
             {
-                this.soundEngine.Stop();
+                SoundEngine.Stop();
             }
 
             var index = Sounds.IndexOf(CurrentSound);
             if (index < Sounds.Count - 1)
             {
                 CurrentSound = Sounds[++index];
-                this.soundEngine.Play(CurrentSound.Path);
+                SoundEngine.Play(CurrentSound.Path);
             }
             else
             {
                 CurrentSound = Sounds[0];
-                this.soundEngine.Play(CurrentSound.Path);
+                SoundEngine.Play(CurrentSound.Path);
             }
             SelectedSound = CurrentSound;
         }
@@ -835,26 +838,26 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         {
             if (this.currentSoundState == SoundState.Playing || this.currentSoundState == SoundState.Paused)
             {
-                this.soundEngine.Stop();
+                SoundEngine.Stop();
             }
 
             var index = Sounds.IndexOf(CurrentSound);
             if (index > 0)
             {
                 CurrentSound = Sounds[--index];
-                this.soundEngine.Play(CurrentSound.Path);
+                SoundEngine.Play(CurrentSound.Path);
             }
             else
             {
                 CurrentSound = Sounds[Sounds.Count - 1];
-                this.soundEngine.Play(CurrentSound.Path);
+                SoundEngine.Play(CurrentSound.Path);
             }
             SelectedSound = CurrentSound;
         }
 
         private void SetMediaEndedEvent(EventHandler newEventHandler, AudioPlayerState newState)
         {
-            this.soundEngine.MediaEnded += newEventHandler;
+            SoundEngine.MediaEnded += newEventHandler;
             this.currentAudioPlayerState = newState;
         }
 
