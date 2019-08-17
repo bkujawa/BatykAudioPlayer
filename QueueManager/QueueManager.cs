@@ -17,14 +17,18 @@ namespace BatykAudioPlayer.BL.QueueManager
             queuedSounds.Add(sound);
         }
 
-        public void Dequeue()
+        public Sound Dequeue()
         {
+            var sound = queuedSounds[0];
             queuedSounds.RemoveAt(0);
+            return sound;
         }
 
         public void Change(int index, Sound sound)
         {
             queuedSounds.Insert(index, sound);
         }
+
+        public bool IsQueueEmpty => this.queuedSounds.Any() ? false : true;
     }
 }

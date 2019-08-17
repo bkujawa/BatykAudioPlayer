@@ -20,6 +20,7 @@ namespace BatykAudioPlayer.BL.FileManager
         private string defaultPlaylist;
         private List<Sound> soundlist = new List<Sound>();
         private List<Sound> playlist = new List<Sound>();
+        private delegate void FilLSoundsFromDirectory(string dir);
 
         #endregion
 
@@ -74,15 +75,21 @@ namespace BatykAudioPlayer.BL.FileManager
             OnStateChanged(new FileManagerEventArgs(playlist, CollectionRefreshed.Playlists));
         }
 
+        // [TODO]: Implement asynchronously
         public void FillSoundsFromDirectory(string dirPath)
         {
             if (!string.IsNullOrEmpty(dirPath))
             {
-                soundlist.Clear();
+                this.soundlist.Clear();
+                //var fillSoundFromDirectoryRecurisve = new FilLSoundsFromDirectory(FillSoundsFromDirectoryRecursive);
+                // i dont want to call asynchronous method here,
+                // i want to fillsoundsfromdirectory method to be called asynchronously from UI layer
+                // should i make a delegate in audioplayerviewmodel to call this method recursive?
+                //fillSoundFromDirectoryRecurisve.BeginInvoke(dirPath, null, null);
                 FillSoundsFromDirectoryRecursive(dirPath);
-                if (soundlist.Any())
+                if (this.soundlist.Any())
                 {
-                    OnStateChanged(new FileManagerEventArgs(soundlist));
+                    OnStateChanged(new FileManagerEventArgs(this.soundlist));
                 }
             }
             else
@@ -103,7 +110,7 @@ namespace BatykAudioPlayer.BL.FileManager
                 {
                     Mp3FileReader reader = new Mp3FileReader(file);
                     TimeSpan duration = reader.TotalTime;
-                    soundlist.Add(new Sound()
+                    this.soundlist.Add(new Sound()
                     {
                         Name = Path.GetFileNameWithoutExtension(file),
                         Path = file,
@@ -147,7 +154,7 @@ namespace BatykAudioPlayer.BL.FileManager
         {
             if (!string.IsNullOrEmpty(playlistPath))
             {
-                soundlist.Clear();
+                this.soundlist.Clear();
                 var allFiles = File.ReadAllLines(playlistPath);
                 for (int i = 0; i < allFiles.Length - 1; i = i + 3)
                 {
@@ -158,7 +165,7 @@ namespace BatykAudioPlayer.BL.FileManager
                         Time = allFiles[i + 2]
                     });
                 }
-                if (soundlist.Any())
+                if (this.soundlist.Any())
                 {
                     OnStateChanged(new FileManagerEventArgs(soundlist));
                 }

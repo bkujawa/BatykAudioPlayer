@@ -44,5 +44,11 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QueueManagerInterface.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SoundEngineInterface\SoundEngineInterface.csproj">
+      <Project>{B64458CE-5A92-46DC-8AF8-AAE72C290585}</Project>
+      <Name>SoundEngineInterface</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -35,6 +35,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QueueManagerTests", "QueueM
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QueueManagerInterface", "QueueManagerInterface\QueueManagerInterface.csproj", "{058A6C9D-85E5-43AC-BDB4-E48874A01CCC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StyleLibrary", "StyleLibrary\StyleLibrary.csproj", "{9A1C7311-C6E1-4381-9E9E-E1CE4F888135}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -81,6 +83,10 @@ Global
 		{058A6C9D-85E5-43AC-BDB4-E48874A01CCC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{058A6C9D-85E5-43AC-BDB4-E48874A01CCC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{058A6C9D-85E5-43AC-BDB4-E48874A01CCC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9A1C7311-C6E1-4381-9E9E-E1CE4F888135}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9A1C7311-C6E1-4381-9E9E-E1CE4F888135}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9A1C7311-C6E1-4381-9E9E-E1CE4F888135}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9A1C7311-C6E1-4381-9E9E-E1CE4F888135}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -100,6 +106,7 @@ Global
 		{00476528-448D-4D61-A48A-2D773C72A2FD} = {F7F3AFD1-D990-4FFA-9D85-85F7BB650B81}
 		{86B4E4CD-7F3D-492A-84A1-95DB92B075CA} = {00476528-448D-4D61-A48A-2D773C72A2FD}
 		{058A6C9D-85E5-43AC-BDB4-E48874A01CCC} = {1B604682-DEBF-4ED0-9521-6EF1271B27E6}
+		{9A1C7311-C6E1-4381-9E9E-E1CE4F888135} = {95D3662E-B389-4A09-BBC4-D5CB7E265385}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {12388DC6-BAB0-4B36-90B1-AD5028092F7B}
