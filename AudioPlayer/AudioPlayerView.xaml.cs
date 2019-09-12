@@ -1,4 +1,6 @@
-﻿using System;
+﻿using BatykAudioPlayer.BL.FileManagerInterface;
+using BatykAudioPlayer.BL.SoundEngineInterface;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,10 +21,10 @@ namespace BatykAudioPlayer.APP.AudioPlayer
     /// </summary>
     public partial class AudioPlayerView : Window
     {
-        public AudioPlayerView()
+        public AudioPlayerView(IFileManager fileManager, ISoundEngine soundEngine)
         {
             InitializeComponent();
-            DataContext = new AudioPlayerViewModel();
+            DataContext = new AudioPlayerViewModel(fileManager, soundEngine);
         }
     }
 }

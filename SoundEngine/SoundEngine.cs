@@ -182,7 +182,7 @@ namespace BatykAudioPlayer.BL.SoundEngine
         /// 
         /// </summary>
         /// <returns></returns>
-        public Tuple<TimeSpan, TimeSpan> GetTimePosition()
+        public Tuple<TimeSpan, TimeSpan> TimePosition()
         {
             if (currentState == null || currentState == SoundState.Unknown || currentState == SoundState.Stopped)
             {
@@ -199,7 +199,7 @@ namespace BatykAudioPlayer.BL.SoundEngine
         /// 
         /// </summary>
         /// <returns></returns>
-        public double GetFilePosition()
+        public double FilePosition()
         {
             if (currentState == null || currentState == SoundState.Unknown || currentState == SoundState.Stopped)
             {
@@ -213,7 +213,7 @@ namespace BatykAudioPlayer.BL.SoundEngine
         }
         #endregion  
         
-        private SoundEngine()
+        public SoundEngine()
         {
             this.mediaPlayer = new MediaPlayer();
             this.volume = this.mediaPlayer.Volume;

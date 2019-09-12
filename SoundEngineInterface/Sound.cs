@@ -12,6 +12,11 @@ namespace BatykAudioPlayer.BL.SoundEngineInterface
     public class Sound
     {
         /// <summary>
+        /// 
+        /// </summary>
+        public int Index { get; set; }
+
+        /// <summary>
         /// Name of file.
         /// </summary>
         public string Name { get;  set; }

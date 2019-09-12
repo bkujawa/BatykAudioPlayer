@@ -9,7 +9,7 @@ namespace BatykAudioPlayer.APP.AudioPlayer
     /// <summary>
     /// Represents state of audio player.
     /// </summary>
-    public enum AudioPlayerState
+    public enum AudioPlayerRepeatState
     {
         Normal,
         Shuffled,
