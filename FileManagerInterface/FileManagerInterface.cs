@@ -10,54 +10,54 @@ namespace BatykAudioPlayer.BL.FileManagerInterface
     public interface IFileManager
     {
         /// <summary>
-        /// 
+        /// Fills Sounds collection with files found in directory pointed by dirPath.
         /// </summary>
         /// <param name="dirPath"></param>
         void FillSoundsFromDirectory(string dirPath);
 
         /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="playlistPath"></param>
-        void FillSoundsFromPlaylist(string playlistPath);
-        /// <summary>
-        /// 
+        /// Fills Sounds collection with files found in default directory.
         /// </summary>
         /// <returns></returns>
         void FillSoundsFromDefaultDirectory();
 
         /// <summary>
-        /// 
+        /// Fills Sounds collection with files found in playlist file pointed by playlistPath.
+        /// </summary>
+        /// <param name="playlistPath"></param>
+        void FillSoundsFromPlaylist(string playlistPath);
+
+        /// <summary>
+        /// Fills Sounds collection with files found in default playlist file.
         /// </summary>
         void FillSoundsFromDefaultPlaylist();
 
-
         /// <summary>
-        /// Fills <see cref="BatykAudioPlayer.APP.AudioPlayer.AudioPlayerViewModel.Playlists"/> with files found in default directory.
+        /// Fills Playlists collection with files found in default directory.
         /// <para></para> 
         /// For now this directory is "C:\'User'\Documents\AudioPlayer"
         /// </summary>
         void FillPlaylistFromDefaultDirectory();
 
         /// <summary>
-        /// 
+        /// Saves default directory in ConfigurationManager.
         /// </summary>
         /// <param name="dirPath"></param>
         void SetDefaultDirectory(string dirPath);
 
         /// <summary>
-        /// 
+        /// Saves default playlist file in ConfigurationManager.
         /// </summary>
         /// <param name="listPath"></param>
         void SetDefaultPlaylist(string listPath);
 
         /// <summary>
-        /// 
+        /// Self-explanatory.
         /// </summary>
         bool CheckIfDefaultDirectoryIsSet();
 
         /// <summary>
-        /// 
+        /// Self-explanatory.
         /// </summary>
         /// <returns></returns>
         bool CheckIfDefaultPlaylistIsSet();
@@ -70,12 +70,7 @@ namespace BatykAudioPlayer.BL.FileManagerInterface
         /// <summary>
         /// 
         /// </summary>
-        event EventHandler<FileManagerErrorArgs> FilePlaylistError;
-
-        /// <summary>
-        /// 
-        /// </summary>
-        void Initialize();
+        event EventHandler<FileManagerErrorArgs> FileManagerError;
     }
 
     /// <summary>
