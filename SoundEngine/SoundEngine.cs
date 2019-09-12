@@ -15,25 +15,12 @@ namespace BatykAudioPlayer.BL.SoundEngine
     {
         #region Private fields        
         private readonly MediaPlayer mediaPlayer;
-        private static SoundEngine soundEngine;
         private SoundState? currentState;
         private string currentPath;
         private double volume;
         #endregion
 
         #region Public properties
-        // [TODO]: Do we need this property thread-safe?
-        public static SoundEngine SoundEngineInstance
-        {
-            get
-            {
-                if (soundEngine == null)
-                {
-                    soundEngine = new SoundEngine();
-                }
-                return soundEngine;
-            }
-        }
 
         /// <summary>
         /// Represents current volume of sound engine. 
