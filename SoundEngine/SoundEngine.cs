@@ -1,29 +1,26 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Media;
 using BatykAudioPlayer.BL.SoundEngineInterface;
 
 namespace BatykAudioPlayer.BL.SoundEngine
 {
-    // [TODO]: revert changes back to interface implementation
-    // think about singleton
-    // different viewmodels will need same instance of soundengine
     public class SoundEngine : ISoundEngine
     {
-        #region Private fields        
+        #region Private fields
+
+        // TODO:
+        // Should MediaPlayer class be hidden behind interface?
         private readonly MediaPlayer mediaPlayer;
         private SoundState? currentState;
         private string currentPath;
         private double volume;
+        
         #endregion
 
         #region Public properties
 
         /// <summary>
-        /// Represents current volume of sound engine. 
+        /// Represents current volume of sound engine.
         /// Respects max and min boundaries.
         /// </summary>
         public double Volume
@@ -45,7 +42,7 @@ namespace BatykAudioPlayer.BL.SoundEngine
         }
 
         /// <summary>
-        /// Event handler used for MediaEnded event. 
+        /// Event handler used for MediaEnded event.
         /// Releases previous event before adds new event. No reason to explicitly remove events.
         /// </summary>
         public event EventHandler MediaEnded
@@ -134,7 +131,7 @@ namespace BatykAudioPlayer.BL.SoundEngine
         }
 
         /// <summary>
-        /// Stop. 
+        /// Stop.
         /// </summary>
         public void Stop()
         {
@@ -166,7 +163,7 @@ namespace BatykAudioPlayer.BL.SoundEngine
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <returns></returns>
         public Tuple<TimeSpan, TimeSpan> TimePosition()
@@ -183,7 +180,7 @@ namespace BatykAudioPlayer.BL.SoundEngine
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <returns></returns>
         public double FilePosition()
@@ -198,8 +195,8 @@ namespace BatykAudioPlayer.BL.SoundEngine
             }
             return 0;
         }
-        #endregion  
-        
+        #endregion
+
         public SoundEngine()
         {
             this.mediaPlayer = new MediaPlayer();

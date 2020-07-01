@@ -240,7 +240,6 @@ namespace BatykAudioPlayer.BL.FileManager
             //    FillSoundsFromDirectoryRecursive(dir);
             //});
 
-
             foreach (var file in allFiles)
             {
                 var pathExtension = Path.GetExtension(file);

@@ -13,7 +13,8 @@
             <Setter Property="Foreground" Value="White" />
         </Style>
 
-        <!--  Work with this style to show time of sound on right edge of grid  -->
+        <!--  TODO: Work with overall styles. Create more base styles and inherit from them. Implement StyleLibrary. -->
+        <!--  TODO: Work with this style to show time of sound on right edge of grid  -->
         <Style x:Key="SoundListStyle" TargetType="{x:Type ListBox}">
             <Setter Property="Background" Value="Black" />
             <Setter Property="ItemTemplate">
@@ -95,10 +96,13 @@
         </Style>
 
         <Style x:Key="MenuButtonStyle" TargetType="{x:Type Button}">
-            <Setter Property="Height" Value="20" />
+
             <Setter Property="Margin" Value="0,0,0,0" />
             <Setter Property="FontWeight" Value="Light" />
             <Setter Property="FontSize" Value="11" />
+            <Setter Property="Background" Value="Black" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="Padding" Value="4, 4, 4, 4" />
         </Style>
 
         <Style x:Key="RoundedButtonStyle"
@@ -134,7 +138,6 @@
                 <Trigger Property="IsMouseCaptureWithin" Value="True">
                     <Setter Property="BorderBrush" Value="Black" />
                 </Trigger>
-
             </Style.Triggers>
         </Style>
 

@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using BatykAudioPlayer.BL.SoundEngineInterface;
 
 namespace BatykAudioPlayer.BL.FileManagerInterface
@@ -72,6 +69,12 @@ namespace BatykAudioPlayer.BL.FileManagerInterface
         /// </summary>
         event EventHandler<FileManagerErrorArgs> FileManagerError;
     }
+
+
+    // TODO: 
+    // I don't think FileManagerEventArgs should be handled this way between Sounds and Playlists.
+    // There should be seperate eventArgs class for sounds change and playlists change.
+    // They can both use same errorArgs class. Actually, why not most of event shouldn't use it?
 
     /// <summary>
     /// 

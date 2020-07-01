@@ -14,22 +14,25 @@
           ShowGridLines="False"
           >
         <Grid.RowDefinitions>
-            <RowDefinition Height="20" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="20" />
             <RowDefinition Height="Auto" />
             <RowDefinition />
-            <RowDefinition Height="20" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition MinWidth="200" />
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition MinWidth="200" />
         </Grid.ColumnDefinitions>
-        <Button HorizontalAlignment="Left"
+        <Button Height="Auto"
+                HorizontalAlignment="Left"
                 Command="{Binding Open}"
-                Content="OpenDirectory"
+                Content="Open Directory"
+                FontSize="16"
+                Margin="0,0,0,5"
                 Style="{StaticResource MenuButtonStyle}"
                 />
 
@@ -142,6 +145,7 @@
             <TextBlock FontSize="14"
                        FontWeight="Bold"
                        Foreground="White"
+                       VerticalAlignment="Center"
                        Text="Playlists"
                        />
             <Button Command="{Binding SavePlaylist}"

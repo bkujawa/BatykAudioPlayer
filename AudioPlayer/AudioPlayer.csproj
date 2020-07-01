@@ -64,7 +64,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="AudioPlayerState.cs" />
+    <Compile Include="AudioPlayerRepeatState.cs" />
     <Compile Include="AudioPlayerView.xaml.cs">
       <DependentUpon>AudioPlayerView.xaml</DependentUpon>
     </Compile>

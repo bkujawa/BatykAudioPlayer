@@ -17,6 +17,9 @@ namespace BatykAudioPlayer.APP.AudioPlayer
 {
     // [TODO]: Split viewmodel into several viewmodels dealing with less functionality
     // i.e. playlistviemodel - soundlistviewmodel - reuse?, toolbarviewmodel?, mediaplayeroptionsviewmodel?, 
+    // implement this.notPlayedSounds to be triggable
+    // implement event subscribing and publishing:
+    // From viewModel i'd like to fire Subscribe and Unsubscribe methods, in which I just provide class of event and method with wich I subscribe (containing appropriate event args class)
     class AudioPlayerViewModel : ViewModelBase
     {
         #region Private fields
@@ -158,6 +161,7 @@ namespace BatykAudioPlayer.APP.AudioPlayer
 
         #region ICommand
 
+        // TODO: this should be a collection
         public ICommand Play { get; private set; }
         public ICommand Pause { get; private set; }
         public ICommand Open { get; private set; }
@@ -764,6 +768,7 @@ namespace BatykAudioPlayer.APP.AudioPlayer
 
         #endregion
 
+        // TODO: How this should be handled?
         #region MediaPlayer.MediaEnded event handlers
 
         private void PreviousSoundRepeatNormal(object sender = null, EventArgs e = null)
