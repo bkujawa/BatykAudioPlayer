@@ -17,7 +17,8 @@ namespace BatykAudioPlayer.APP.AudioPlayer
             //       Imperative/Declarative registration?
             base.OnStartup(e);
             IFileManager fileManager = new FileManager();
-            ISoundEngine soundEngine = new SoundEngine();
+            IMediaPlayer mediaPlayer = new BatykAudioPlayer.BL.SoundEngine.MediaPlayer();
+            ISoundEngine soundEngine = new SoundEngine(mediaPlayer);
             Application.Current.MainWindow = new AudioPlayerView(fileManager, soundEngine);
             Application.Current.MainWindow.Show();
             Application.Current.DispatcherUnhandledException += OnDispatcherUnhandledException;

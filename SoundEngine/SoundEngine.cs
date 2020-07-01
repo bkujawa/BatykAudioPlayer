@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Windows.Media;
 using BatykAudioPlayer.BL.SoundEngineInterface;
 
 namespace BatykAudioPlayer.BL.SoundEngine
@@ -8,9 +7,7 @@ namespace BatykAudioPlayer.BL.SoundEngine
     {
         #region Private fields
 
-        // TODO:
-        // Should MediaPlayer class be hidden behind interface?
-        private readonly MediaPlayer mediaPlayer;
+        private readonly IMediaPlayer mediaPlayer;
         private SoundState? currentState;
         private string currentPath;
         private double volume;
@@ -49,11 +46,11 @@ namespace BatykAudioPlayer.BL.SoundEngine
         {
             add
             {
-                if (this.mediaEnded != null)
-                {
-                    this.mediaPlayer.MediaEnded -= mediaEnded;
-                    this.mediaEnded -= mediaEnded;
-                }
+                //if (this.mediaEnded != null)
+                //{
+                //    this.mediaPlayer.MediaEnded -= mediaEnded;
+                //    this.mediaEnded -= mediaEnded;
+                //}
                 this.mediaEnded += value;
                 this.mediaPlayer.MediaEnded += value;
             }
@@ -63,9 +60,11 @@ namespace BatykAudioPlayer.BL.SoundEngine
                 this.mediaEnded -= value;
             }
         }
+
         #endregion
 
         #region Event handlers
+
         public event EventHandler<SoundEngineEventArgs> StateChanged;
         public event EventHandler<SoundEngineErrorArgs> SoundError;
         private event EventHandler mediaEnded;
@@ -80,9 +79,11 @@ namespace BatykAudioPlayer.BL.SoundEngine
         {
             SoundError?.Invoke(this, new SoundEngineErrorArgs(error));
         }
+
         #endregion
 
         #region ISoundEngine implementation
+
         /// <summary>
         /// Plays sound pointed by path.
         /// </summary>
@@ -195,12 +196,14 @@ namespace BatykAudioPlayer.BL.SoundEngine
             }
             return 0;
         }
+
         #endregion
 
-        public SoundEngine()
+        public SoundEngine(IMediaPlayer mediaPlayer)
         {
-            this.mediaPlayer = new MediaPlayer();
+            this.mediaPlayer = mediaPlayer;
             this.volume = this.mediaPlayer.Volume;
+            
         }
     }
 }
