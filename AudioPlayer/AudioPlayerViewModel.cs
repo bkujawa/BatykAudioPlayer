@@ -62,7 +62,10 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         /// </summary>
         public Sound SelectedSound
         {
-            get => this.selectedSound;
+            get
+            {
+                return this.selectedSound;
+            }
             set
             {
                 this.selectedSound = value;
@@ -75,7 +78,10 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         /// </summary>
         public Sound CurrentSound
         {
-            get => this.currentSound;
+            get
+            {
+                return this.currentSound;
+            }
             set
             {
                 this.currentSound = value;
@@ -88,7 +94,10 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         /// </summary>
         public Sound SelectedPlaylist
         {
-            get => this.selectedPlaylist;
+            get
+            {
+                return this.selectedPlaylist;
+            }
             set
             {
                 this.selectedPlaylist = value;
@@ -98,7 +107,10 @@ namespace BatykAudioPlayer.APP.AudioPlayer
 
         public double Progress
         {
-            get => this.progress;
+            get
+            {
+                return this.progress;
+            }
             set
             {
                 this.progress = value;
@@ -108,7 +120,10 @@ namespace BatykAudioPlayer.APP.AudioPlayer
 
         public string TimeInfo
         {
-            get => this.timeInfo;
+            get
+            {
+                return this.timeInfo;
+            }
             set
             {
                 this.timeInfo = value;
@@ -118,7 +133,10 @@ namespace BatykAudioPlayer.APP.AudioPlayer
 
         public string Mute
         {
-            get => this.mute;
+            get
+            {
+                return this.mute;
+            }
             set
             {
                 this.mute = value;
@@ -131,7 +149,10 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         /// </summary>
         public string SavedPlaylistName
         {
-            get => this.savedPlaylistName;
+            get
+            {
+                return this.savedPlaylistName;
+            }
             set
             {
                 this.savedPlaylistName = value;
@@ -477,7 +498,7 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         private void ExecuteRepeatShuffle(object obj)
         {
             this.notPlayedSounds = Sounds.ToList();
-            SetMediaEndedEvent(NextSoundRepeatShuffled, AudioPlayerRepeatState.Shuffled);
+            SetAudioPlayerRepeatState(NextSoundRepeatShuffled, AudioPlayerRepeatState.Shuffled);
             if (this.currentSoundState == SoundState.Playing || this.currentSoundState == SoundState.Paused)
             {
                 this.notPlayedSounds.Remove(CurrentSound);
@@ -501,7 +522,7 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         /// </summary>
         private void ExecuteRepeatSound(object obj)
         {
-            SetMediaEndedEvent(NextSoundRepeatSound, AudioPlayerRepeatState.RepeatSound);
+            SetAudioPlayerRepeatState(NextSoundRepeatSound, AudioPlayerRepeatState.RepeatSound);
         }
 
         /// <summary>
@@ -521,7 +542,7 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         /// </summary>
         private void ExecuteRepeatPlaylist(object obj)
         {
-            SetMediaEndedEvent(NextSoundRepeatPlaylist, AudioPlayerRepeatState.RepeatPlaylist);
+            SetAudioPlayerRepeatState(NextSoundRepeatPlaylist, AudioPlayerRepeatState.RepeatPlaylist);
         }
 
         /// <summary>
@@ -541,7 +562,7 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         /// </summary>
         private void ExecuteRepeatNormal(object obj)
         {
-            SetMediaEndedEvent(NextSoundRepeatNormal, AudioPlayerRepeatState.Normal);
+            SetAudioPlayerRepeatState(NextSoundRepeatNormal, AudioPlayerRepeatState.Normal);
         }
 
         /// <summary>
@@ -558,6 +579,8 @@ namespace BatykAudioPlayer.APP.AudioPlayer
         /// <param name="obj"></param>
         private void ExecuteSavePlaylist(object obj)
         {
+            // TODO: 
+            // This should be done in filemanager/playlistmanager.
             string docPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "AudioPlayer");
             Directory.CreateDirectory(docPath);
             using (StreamWriter sr = new StreamWriter(Path.Combine(docPath, SavedPlaylistName + ".txt")))
@@ -869,7 +892,7 @@ namespace BatykAudioPlayer.APP.AudioPlayer
             SelectedSound = CurrentSound;
         }
 
-        private void SetMediaEndedEvent(EventHandler newEventHandler, AudioPlayerRepeatState newState)
+        private void SetAudioPlayerRepeatState(EventHandler newEventHandler, AudioPlayerRepeatState newState)
         {
             this.soundEngine.MediaEnded += newEventHandler;
             this.currentAudioPlayerState = newState;
